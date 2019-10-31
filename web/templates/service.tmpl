@@ -18,6 +18,7 @@
                 <th>Pillar</th>
                 <th>Server Status</th>
                 <th>Action</th>
+                <th>Service Status</th>
             </tr>
             </thead>
             {{ $response := .response }}
@@ -35,7 +36,7 @@
                 <td><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></td>
                 {{ end }}
                 <td>
-                {{ range $v.Services }}
+                    {{ range $v.Services }}
                     {{ . }}
                     <form action="/service?server={{ $v.Server }}&service={{ . }}" method="POST" style="display: inline">
                         <select name="action">
@@ -48,7 +49,12 @@
                         <input type="submit" value="提交" />
                     </form>
                     </br>
-                {{ end}}
+                    {{ end}}
+                </td>
+                <td>
+                    {{ range $v.ServiceStatuss }}
+                    {{ . }}</br>
+                    {{end}}
                 </td>
             </tr>
             </tbody>

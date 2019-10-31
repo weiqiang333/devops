@@ -26,6 +26,7 @@ type services struct {
 	Service string `json:"service" form:"service"`
 	Services []string
 	ServiceStatus string `json:"service_status" form:"service_status"`
+	ServiceStatuss []string
 }
 
 
@@ -67,7 +68,7 @@ func searchService(server string) []serverList {
 	//sql := fmt.Sprintf("SELECT server, status FROM server_list;")
 	servers := []serverList{}
 	sql := fmt.Sprintf(`SELECT server_list.server, server_list.name, server_list.app, server_list.pillar, server_list.status,
-			string_agg(service.service, ',') AS service
+		string_agg(service.service, ',') AS service, string_agg(service.status, ',') AS service_status
 		FROM server_list
 		JOIN service ON server_list.server = service.server
 		GROUP BY server_list.server, server_list.name, server_list.app, server_list.pillar, server_list.status;`)
@@ -81,7 +82,7 @@ func searchService(server string) []serverList {
 
 	for row.Next() {
 		var s serverList
-		if err := row.Scan(&s.Server, &s.Name, &s.App, &s.Pillar, &s.Status, &s.Service); err != nil {
+		if err := row.Scan(&s.Server, &s.Name, &s.App, &s.Pillar, &s.Status, &s.Service, &s.ServiceStatus); err != nil {
 			log.Printf("db rows scan fail: %v", err)
 		}
 		servers = append(servers, s)
@@ -89,6 +90,7 @@ func searchService(server string) []serverList {
 	for i, s := range servers {
 		servers[i].Id = i
 		servers[i].Services = strings.Split(s.Service, ",")
+		servers[i].ServiceStatuss = strings.Split(s.ServiceStatus, ",")
 		if s.Server == server {
 			servers[i].Action = "true"
 		}
