@@ -1,0 +1,53 @@
+{{ define "service.tmpl" }}
+    {{ template "head.tmpl" . }}
+
+<div class="container theme-showcase" role="main">
+    <div class="page-header">
+        <h1>Service</h1>
+    </div>
+
+    <div class="row">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Server</th>
+                <th>Server Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            {{ range $v := .server }}
+            <tbody>
+            <tr>
+                <td>{{ $v.Id }}</td>
+                <td>{{ $v.Server }}</td>
+                <td>{{ $v.Status }}</td>
+                <td>
+                {{ range $v.Services }}
+                    {{ . }}
+                    <form action="/service?server={{ $v.Server }}&service={{ . }}" method="POST" style="display: inline">
+                    <select name="action">
+                        <option value="status">status</option>
+                        <option value="reload">reload</option>
+                        <option value="start">start</option>
+                        <option value="stop">stop</option>
+                        <option value="restart">restart</option>
+                    </select>
+                    <input type="submit" value="提交" />
+                    </form>
+                    </br>
+                {{ end}}
+                </td>
+            </tr>
+            </tbody>
+            {{ end }}
+        </table>
+    </div>
+    </div>
+</div>
+
+
+    {{ template "base.tmpl" . }}
+{{ end }}
