@@ -18,7 +18,8 @@ func Db() (db *sql.DB) {
 	dbname := viper.GetString("database.dbname")
 	user := viper.GetString("database.user")
 	password := viper.GetString("database.password")
-	db, err := sql.Open(driverName, fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s", host, port, dbname, user, password))
+	connect_timeout := viper.GetString("database.connect_timeout")
+	db, err := sql.Open(driverName, fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s connect_timeout=%s", host, port, dbname, user, password, connect_timeout))
 	if err != nil {
 		log.Fatalf("unable to open database: %v", err)
 	}

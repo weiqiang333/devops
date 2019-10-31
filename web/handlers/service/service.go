@@ -16,6 +16,7 @@ type serverList struct {
 	Server string `json:"server" form:"server"`
 	Status bool `json:"status" form:"status"`
 	services
+	Action string
 }
 
 type services struct {
@@ -31,52 +32,60 @@ func ListService(c *gin.Context) {
 	if c.Request.Method == http.MethodPost {
 		server := c.Query("server")
 		service := c.Query("service")
-		action := c.Query("action")
-		c.JSON(http.StatusOK, gin.H{
-			"server": server,
-			"service": service,
-			"action": action,
+		action, _ := c.GetPostForm("action")
+		response := serviceCmd(server, service, action)
+		servers := searchService(server)
+		c.HTML(http.StatusOK, "service.tmpl", gin.H{
+			"server": servers,
+			"response": response,
 		})
 		return
 	}
-	servers := searchService()
+	servers := searchService("")
 	c.HTML(http.StatusOK, "service.tmpl", gin.H{
 		"server": servers,
 	})
+	return
 }
 
 
-func cmd(cmd string) []string {
-	response := sshclient.SSHCline("/data/wei_loacl/sshkey/apps_rsa","apps","10.0.1.55","222", cmd)
-	serviceList := strings.Split(response, "\n")
-	return serviceList
+func serviceCmd(server, service, action string) string {
+	cmd := fmt.Sprintf("sudo systemctl %s %s", action, service)
+	response := sshclient.SSHCline("/data/wei_loacl/sshkey/apps_rsa","apps", server,"222", cmd)
+	//responses := strings.Split(response, "\n")
+	return response
 }
 
 
-func searchService() []serverList {
+func searchService(server string) []serverList {
 	//sql := fmt.Sprintf("SELECT server, status FROM server_list;")
+	servers := []serverList{}
 	sql := fmt.Sprintf(`SELECT server_list.server, server_list.status, string_agg(service.service, ',') AS service
 		FROM server_list
 		JOIN service ON server_list.server = service.server
 		GROUP BY server_list.server, server_list.status;`)
 	db := database.Db()
 	row, err := db.Query(sql)
-	if err != nil {
-		log.Fatalf("search service error: %v", err)
-	}
 	defer row.Close()
-	servers := []serverList{}
+	if err != nil {
+		log.Printf("search service error: %v", err)
+		return servers
+	}
+
 	for row.Next() {
 		var s serverList
 		if err := row.Scan(&s.Server, &s.Status, &s.Service); err != nil {
-			log.Fatalf("db rows scan fail: %v", err)
+			log.Printf("db rows scan fail: %v", err)
 		}
 		servers = append(servers, s)
 	}
 	fmt.Println(servers)
-	for i, a := range servers {
+	for i, s := range servers {
 		servers[i].Id = i
-		servers[i].Services = strings.Split(a.Service, ",")
+		servers[i].Services = strings.Split(s.Service, ",")
+		if s.Server == server {
+			servers[i].Action = "true"
+		}
 	}
 	return servers
 }

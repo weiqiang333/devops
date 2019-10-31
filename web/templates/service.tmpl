@@ -17,7 +17,7 @@
                 <th>Action</th>
             </tr>
             </thead>
-
+            {{ $response := .response }}
             {{ range $v := .server }}
             <tbody>
             <tr>
@@ -28,20 +28,29 @@
                 {{ range $v.Services }}
                     {{ . }}
                     <form action="/service?server={{ $v.Server }}&service={{ . }}" method="POST" style="display: inline">
-                    <select name="action">
-                        <option value="status">status</option>
-                        <option value="reload">reload</option>
-                        <option value="start">start</option>
-                        <option value="stop">stop</option>
-                        <option value="restart">restart</option>
-                    </select>
-                    <input type="submit" value="提交" />
+                        <select name="action">
+                            <option value="status">status</option>
+                            <option value="reload">reload</option>
+                            <option value="start">start</option>
+                            <option value="stop">stop</option>
+                            <option value="restart">restart</option>
+                        </select>
+                        <input type="submit" value="提交" />
                     </form>
                     </br>
                 {{ end}}
                 </td>
             </tr>
             </tbody>
+            {{ if $v.Action }}
+            <tbody>
+                <tr>
+                    <td colspan="4">
+                        <textarea rows="10" cols="180">{{ $response }}</textarea>
+                    </td>
+                </tr>
+            </tbody>
+            {{ end }}
             {{ end }}
         </table>
     </div>

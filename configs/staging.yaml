@@ -5,3 +5,4 @@ database:
   dbname: xxx
   user: xxx
   password: xxx
+  connect_timeout: 10
