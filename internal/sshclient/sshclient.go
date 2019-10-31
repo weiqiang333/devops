@@ -14,11 +14,11 @@ import (
 func SSHCline(privateKey, username, address, port, cmd string) string {
 	key, err := ioutil.ReadFile(privateKey)
 	if err != nil {
-		log.Fatalf("unable to read private key: %v", err)
+		log.Printf("unable to read private key: %v", err)
 	}
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
-		log.Fatalf("unable to parse private key: %v", err)
+		log.Printf("unable to parse private key: %v", err)
 	}
 	// An SSH client is represented with a ClientConn.
 	//
@@ -34,14 +34,14 @@ func SSHCline(privateKey, username, address, port, cmd string) string {
 	}
 	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%s", address, port), config)
 	if err != nil {
-		log.Fatal("Failed to dial: ", err)
+		log.Printf("Failed to dial for SSHCline: ", err)
 	}
 
 	// Each ClientConn can support multiple interactive sessions,
 	// represented by a Session.
 	session, err := client.NewSession()
 	if err != nil {
-		log.Fatal("Failed to create session: ", err)
+		log.Printf("Failed to create session for SSHCline: ", err)
 	}
 	defer session.Close()
 
@@ -50,7 +50,7 @@ func SSHCline(privateKey, username, address, port, cmd string) string {
 	var b bytes.Buffer
 	session.Stdout = &b
 	if err := session.Run(cmd); err != nil {
-		log.Fatal("Failed to run: " + err.Error())
+		log.Printf("Failed to run for SSHCline: %s. %s", cmd, err.Error())
 	}
 	return b.String()
 }
