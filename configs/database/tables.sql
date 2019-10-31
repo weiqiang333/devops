@@ -1,9 +1,9 @@
 CREATE TABLE "server_list" (
   "id" SERIAL NOT NULL PRIMARY KEY,
   "server" VARCHAR NOT NULL,
-  "name" VARCHAR(20),
-  "app" VARCHAR(64),
-  "pillar" VARCHAR(20),
+  "name" VARCHAR(20) DEFAULT '' ,
+  "app" VARCHAR(64) DEFAULT '',
+  "pillar" VARCHAR(20) DEFAULT '',
   "status" BOOLEAN NOT NULL DEFAULT FALSE,
   "uptime" TIMESTAMP DEFAULT (now() at time zone 'utc')
 );
