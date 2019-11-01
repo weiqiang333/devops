@@ -69,7 +69,11 @@ func init() {
 
   // Cobra also supports local flags, which will only run
   // when this action is called directly.
-  rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+  rootCmd.Flags().StringP("address", "d", "0.0.0.0:8080", "devops run listening address")
+  err := viper.BindPFlags(rootCmd.Flags())
+  if err != nil {
+    fmt.Println(err.Error())
+  }
 }
 
 

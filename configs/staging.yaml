@@ -6,3 +6,12 @@ database:
   user: xxx
   password: xxx
   connect_timeout: 10
+
+sshcline:
+  private_key: ~/.ssh/id_rsa
+  username: xxx
+  port: xxx
+
+cron:
+  update_server_list: '@every 3h'
+  update_service: '@every 10m'

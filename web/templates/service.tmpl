@@ -13,8 +13,12 @@
             <tr>
                 <th>#</th>
                 <th>Server</th>
+                <th>Name</th>
+                <th>App</th>
+                <th>Pillar</th>
                 <th>Server Status</th>
                 <th>Action</th>
+                <th>Service Status</th>
             </tr>
             </thead>
             {{ $response := .response }}
@@ -23,9 +27,16 @@
             <tr>
                 <td>{{ $v.Id }}</td>
                 <td>{{ $v.Server }}</td>
-                <td>{{ $v.Status }}</td>
+                <td>{{ $v.Name }}</td>
+                <td>{{ $v.App }}</td>
+                <td>{{ $v.Pillar }}</td>
+                {{ if $v.Status }}
+                <td><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span></td>
+                {{ else }}
+                <td><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></td>
+                {{ end }}
                 <td>
-                {{ range $v.Services }}
+                    {{ range $v.Services }}
                     {{ . }}
                     <form action="/service?server={{ $v.Server }}&service={{ . }}" method="POST" style="display: inline">
                         <select name="action">
@@ -38,14 +49,19 @@
                         <input type="submit" value="提交" />
                     </form>
                     </br>
-                {{ end}}
+                    {{ end}}
+                </td>
+                <td>
+                    {{ range $v.ServiceStatuss }}
+                    {{ . }}</br>
+                    {{end}}
                 </td>
             </tr>
             </tbody>
             {{ if $v.Action }}
             <tbody>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="100">
                         <textarea rows="10" cols="180">{{ $response }}</textarea>
                     </td>
                 </tr>

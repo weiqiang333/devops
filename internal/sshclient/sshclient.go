@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"golang.org/x/crypto/ssh"
 )
 
 
 // SSHClient
-func SSHCline(privateKey, username, address, port, cmd string) string {
+func SSHCline(privateKey, username, address, port, cmd string) (string, error) {
 	key, err := ioutil.ReadFile(privateKey)
 	if err != nil {
 		log.Printf("unable to read private key: %v", err)
@@ -31,10 +32,12 @@ func SSHCline(privateKey, username, address, port, cmd string) string {
 			ssh.PublicKeys(signer),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Timeout: 3 * time.Second,
 	}
 	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%s", address, port), config)
 	if err != nil {
 		log.Printf("Failed to dial for SSHCline: ", err)
+		return "", err
 	}
 
 	// Each ClientConn can support multiple interactive sessions,
@@ -42,6 +45,7 @@ func SSHCline(privateKey, username, address, port, cmd string) string {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Printf("Failed to create session for SSHCline: ", err)
+		return "", err
 	}
 	defer session.Close()
 
@@ -50,7 +54,8 @@ func SSHCline(privateKey, username, address, port, cmd string) string {
 	var b bytes.Buffer
 	session.Stdout = &b
 	if err := session.Run(cmd); err != nil {
-		log.Printf("Failed to run for SSHCline: %s. %s", cmd, err.Error())
+		log.Printf("Failed to run for SSHCline: %s: %s. %s", address, cmd, err.Error())
+		return "", err
 	}
-	return b.String()
+	return b.String(), nil
 }
