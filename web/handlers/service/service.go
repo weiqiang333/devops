@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"net/http"
 	"strings"
 	"log"
@@ -32,8 +33,6 @@ type services struct {
 
 //ListService 列出服务
 func ListService(c *gin.Context) {
-	//cmdList := `systemctl list-unit-files | grep -E '\.service\s+(generated|enabled)' | awk -F'.service' '{print $1}' |
-	//	grep -vE 'acpid|atd|auditd|autovt@|chronyd|crond|cloud-config|cloud-final|cloud-init|dmraid-activation|getty@|hibinit-agent|irqbalance|lvm2-monitor|libstoragemgmt|mdmonitor|microcode|postfix|rngd|rpcbind|rsyslog|sysstat|systemd-readahead-collect|systemd-readahead-drop|systemd-readahead-replay|update-motd|amazon-ssm-agent'`
 	if c.Request.Method == http.MethodPost {
 		server := c.Query("server")
 		service := c.Query("service")
@@ -55,8 +54,11 @@ func ListService(c *gin.Context) {
 
 
 func serviceCmd(server, service, action string) string {
+	privateKey := viper.GetString("sshcline.private_key")
+	username := viper.GetString("sshcline.username")
+	port := viper.GetString("sshcline.port")
 	cmd := fmt.Sprintf("sudo systemctl %s %s", action, service)
-	response, err := sshclient.SSHCline("/data/wei_loacl/sshkey/apps_rsa","apps", server,"222", cmd)
+	response, err := sshclient.SSHCline(privateKey, username, server, port, cmd)
 	if err != nil {
 		return err.Error()
 	}
@@ -75,6 +77,7 @@ func searchService(server string) []serverList {
 	db := database.Db()
 	row, err := db.Query(sql)
 	defer row.Close()
+	defer db.Close()
 	if err != nil {
 		log.Printf("search service error: %v", err)
 		return servers

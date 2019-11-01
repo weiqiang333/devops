@@ -32,7 +32,7 @@ func SSHCline(privateKey, username, address, port, cmd string) (string, error) {
 			ssh.PublicKeys(signer),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout: 5 * time.Second,
+		Timeout: 3 * time.Second,
 	}
 	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%s", address, port), config)
 	if err != nil {
@@ -54,7 +54,7 @@ func SSHCline(privateKey, username, address, port, cmd string) (string, error) {
 	var b bytes.Buffer
 	session.Stdout = &b
 	if err := session.Run(cmd); err != nil {
-		log.Printf("Failed to run for SSHCline: %s. %s", cmd, err.Error())
+		log.Printf("Failed to run for SSHCline: %s: %s. %s", address, cmd, err.Error())
 		return "", err
 	}
 	return b.String(), nil

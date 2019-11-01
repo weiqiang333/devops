@@ -13,7 +13,6 @@ CREATE UNIQUE index "index_server_on_server_list" on "server_list" ("server");
 CREATE TABLE "service" (
   "id" SERIAL NOT NULL PRIMARY KEY,
   "server" VARCHAR NOT NULL,
-  "service" VARCHAR(64),
+  "service" VARCHAR,
   "status" VARCHAR(10) DEFAULT 'unknown'
 );
-CREATE UNIQUE index "index_server_on_service" on "service" ("server");

@@ -1,10 +1,13 @@
 package web
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/weiqiang333/devops/web/handlers/service"
+	"github.com/weiqiang333/devops/internal/crontab"
 )
 
 
@@ -19,5 +22,9 @@ func Web()  {
 	})
 	router.GET("/service", service.ListService)
 	router.POST("/service", service.ListService)
-	router.Run()
+	crontab.CronTab()
+	err := router.Run(viper.GetString("address")) // listen and serve on 0.0.0.0:8080
+	if err != nil {
+		log.Println(err.Error())
+	}
 }
