@@ -1,9 +1,9 @@
 package crontab
 
 import (
-	"github.com/spf13/viper"
 	"log"
 
+	"github.com/spf13/viper"
 	"github.com/robfig/cron"
 )
 

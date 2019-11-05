@@ -18,6 +18,7 @@ func Web()  {
 
 	router.GET("/", 	func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"home": "active",
 		})
 	})
 	router.GET("/service", service.ListService)

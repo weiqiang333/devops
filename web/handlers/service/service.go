@@ -37,16 +37,18 @@ func ListService(c *gin.Context) {
 		server := c.Query("server")
 		service := c.Query("service")
 		action, _ := c.GetPostForm("action")
-		response := serviceCmd(server, service, action)
+		actionResponse := serviceCmd(server, service, action)
 		servers := searchService(server)
 		c.HTML(http.StatusOK, "service.tmpl", gin.H{
+			"service": "active",
 			"server": servers,
-			"response": response,
+			"response": actionResponse,
 		})
 		return
 	}
 	servers := searchService("")
 	c.HTML(http.StatusOK, "service.tmpl", gin.H{
+		"service": "active",
 		"server": servers,
 	})
 	return
