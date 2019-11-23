@@ -7,6 +7,7 @@ database:
   password: xxx
   connect_timeout: 10
 
+# service 管理，服务器认证信息
 sshcline:
   private_key: ~/.ssh/id_rsa
   username: xxx
@@ -15,3 +16,12 @@ sshcline:
 cron:
   update_server_list: '@every 3h'
   update_service: '@every 10m'
+
+# 登录认证 LDAP
+authentication:
+  ldap:
+    address: xxx
+    port: xxx
+    basedn: "dc=growingio,dc=com"
+    bindusername: "cn=growingio,cn=users,dc=growingio,dc=com"
+    bindpassword: xxx
