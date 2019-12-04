@@ -51,6 +51,15 @@
                     <li {{ if .home }}class="active"{{ end }}><a href="/">Home</a></li>
                     <li {{ if .service }}class="active"{{ end }}><a href="/service">Service Admin</a></li>
                 </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {{ if .user }}
+                    <li><a href="/status">{{ .user }}</a></li>
+                    <li><a href="/logout">登出</a></li>
+                    {{ else }}
+                    <li><a href="/login">登录</a></li>
+                    {{ end }}
+                    <li><a class="back-to-top" href="#top">返回顶部</a><li>
+                </ul>
             </div><!--/.nav-collapse -->
         </div>
     </nav>

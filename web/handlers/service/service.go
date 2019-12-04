@@ -3,9 +3,11 @@ package service
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	"github.com/weiqiang333/devops/internal/authentication"
+	"github.com/weiqiang333/devops/web/handlers/auth"
+	"log"
 	"net/http"
 	"strings"
-	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/weiqiang333/devops/internal/database"
@@ -33,16 +35,30 @@ type services struct {
 
 //ListService 列出服务
 func ListService(c *gin.Context) {
+	username := auth.Me(c)
 	if c.Request.Method == http.MethodPost {
 		server := c.Query("server")
 		service := c.Query("service")
 		action, _ := c.GetPostForm("action")
-		actionResponse := serviceCmd(server, service, action)
 		servers := searchService(server)
+
+		if ! authorization(fmt.Sprint(username)) {
+			log.Printf("Info ListService action %s Currently not authorized for %s", action, username)
+			c.HTML(http.StatusLocked, "service.tmpl", gin.H{
+				"service": "active",
+				"server": servers,
+				"response": "Currently not authorized, please contact SRE",
+				"user": username,
+			})
+			return
+		}
+
+		actionResponse := serviceCmd(server, service, action)
 		c.HTML(http.StatusOK, "service.tmpl", gin.H{
 			"service": "active",
 			"server": servers,
 			"response": actionResponse,
+			"user": username,
 		})
 		return
 	}
@@ -50,6 +66,7 @@ func ListService(c *gin.Context) {
 	c.HTML(http.StatusOK, "service.tmpl", gin.H{
 		"service": "active",
 		"server": servers,
+		"user": username,
 	})
 	return
 }
@@ -101,4 +118,34 @@ func searchService(server string) []serverList {
 		}
 	}
 	return servers
+}
+
+
+// authorization LDAP
+func authorization(username string) bool {
+	groupDN, err := authentication.LdapGourp("sre")
+	if err != nil {
+		log.Println(err.Error())
+		return false
+	}
+
+	users, err := authentication.LdapGroupUser(groupDN)
+	if err != nil {
+		log.Println(err.Error())
+		return false
+	}
+	return recursionUsers(username, users)
+}
+
+
+// recursionUsers 确认用户授权在用户组中
+func recursionUsers(username string, users []string) bool {
+	if len(users) == 0 {
+		return false
+	}
+	if username == users[0] {
+		return true
+	} else  {
+		return recursionUsers(username, users[1:])
+	}
 }
