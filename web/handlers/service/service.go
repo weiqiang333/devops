@@ -43,6 +43,7 @@ func ListService(c *gin.Context) {
 		servers := searchService(server)
 
 		if ! authorization(fmt.Sprint(username)) {
+			log.Printf("Info ListService action %s Currently not authorized for %s", action, username)
 			c.HTML(http.StatusLocked, "service.tmpl", gin.H{
 				"service": "active",
 				"server": servers,
@@ -124,11 +125,13 @@ func searchService(server string) []serverList {
 func authorization(username string) bool {
 	groupDN, err := authentication.LdapGourp("sre")
 	if err != nil {
+		log.Println(err.Error())
 		return false
 	}
 
 	users, err := authentication.LdapGroupUser(groupDN)
 	if err != nil {
+		log.Println(err.Error())
 		return false
 	}
 	return recursionUsers(username, users)

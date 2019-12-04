@@ -24,7 +24,7 @@ func ldapDial() (*Conn, error) {
 	}
 	err = l.Bind(bindusername, bindpassword)
 	if err != nil {
-		log.Fatal("LADP Bind Failed: ", err)
+		log.Printf("LADP Bind Failed: %v", err)
 	}
 	return l, err
 }
@@ -57,24 +57,20 @@ func LdapGourp(groupname string) (string, error) {
 		return "", fmt.Errorf("ldapDial Failed")
 	}
 
-	log.Println(baseDN)
 	searchRequest := NewSearchRequest(
 		baseDN, // The base dn to search
 		ScopeWholeSubtree, NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf("(&(objectClass=group)(CN=%s))", groupname),
-		//"(&(objectClass=user)(memberof:=CN=em,DC=growingio,DC=com))",
 		[]string{"dn"},
 		nil,
 	)
 
 	sr, err := l.Search(searchRequest)
 	if err != nil {
-		log.Printf("Search Group for LDAP: %v", err)
 		return "", fmt.Errorf("Search Group for LDAP: %s", err.Error())
 	}
 
 	if len(sr.Entries) != 1 {
-		log.Printf("Groups does not exist or too many entries returned: %s", groupname)
 		return "", fmt.Errorf("Groups does not exist or too many entries returned: %s", groupname)
 	}
 	return sr.Entries[0].DN, nil
@@ -90,7 +86,6 @@ func LdapGroupUser(groupDN string) ([]string, error) {
 		return []string{}, fmt.Errorf("ldapDial Failed")
 	}
 
-	log.Println(baseDN)
 	searchRequest := NewSearchRequest(
 		baseDN, // The base dn to search
 		ScopeWholeSubtree, NeverDerefAliases, 0, 0, false,
@@ -101,7 +96,6 @@ func LdapGroupUser(groupDN string) ([]string, error) {
 
 	sr, err := l.Search(searchRequest)
 	if err != nil {
-		log.Printf("Search Group for LDAP: %v", err)
 		return []string{}, fmt.Errorf("Search Group for LDAP: %s", err.Error())
 	}
 
@@ -111,7 +105,5 @@ func LdapGroupUser(groupDN string) ([]string, error) {
 	if len(groupUser) == 0 {
 		return []string{}, fmt.Errorf("LdapGroupUser Search for nil")
 	}
-
-	fmt.Println(groupUser)
 	return groupUser, nil
 }

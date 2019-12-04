@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"fmt"
-	"github.com/weiqiang333/devops/internal/authentication"
+	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/weiqiang333/devops/internal/authentication"
 )
 
 const (
@@ -19,7 +19,7 @@ const (
 func AuthRequired(c *gin.Context) {
 	user := Me(c)
 	if user == nil {
-		fmt.Printf("Unauthorized")
+		log.Printf("Unauthorized")
 		// Abort the request with the appropriate error code
 		c.AbortWithStatus(http.StatusUnauthorized)
 		c.HTML(http.StatusUnauthorized, "login.tmpl", gin.H{"Authentication": "Unauthorized"})
@@ -64,15 +64,11 @@ func Logout(c *gin.Context) {
 		c.HTML(http.StatusBadRequest, "login.tmpl", gin.H{"Authentication": "Invalid session token"})
 		return
 	}
-	fmt.Println(user)
 	session.Delete(userkey)
-	fmt.Println("1", session.Get(userkey))
 	if err := session.Save(); err != nil {
 		c.HTML(http.StatusInternalServerError, "login.tmpl", gin.H{"Authentication": "Failed to save session"})
 		return
 	}
-	fmt.Println("2", session.Get(userkey))
-	fmt.Printf("333")
 	c.Redirect(http.StatusFound, "/")
 }
 
