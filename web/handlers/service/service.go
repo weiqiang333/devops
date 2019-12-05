@@ -2,16 +2,17 @@ package service
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
-	"github.com/weiqiang333/devops/internal/authentication"
-	"github.com/weiqiang333/devops/web/handlers/auth"
 	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+
 	"github.com/weiqiang333/devops/internal/database"
 	"github.com/weiqiang333/devops/internal/sshclient"
+	"github.com/weiqiang333/devops/internal/authentication"
+	"github.com/weiqiang333/devops/web/handlers/auth"
 )
 
 type serverList struct {
