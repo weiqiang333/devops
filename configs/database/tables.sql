@@ -16,3 +16,13 @@ CREATE TABLE "service" (
   "service" VARCHAR,
   "status" VARCHAR(10) DEFAULT 'unknown'
 );
+
+
+CREATE TABLE "google_auth" (
+  "id" SERIAL NOT NULL PRIMARY KEY,
+  "name" VARCHAR(30) NOT NULL,
+  "secret"  VARCHAR(32) NOT NULL,
+  "created_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  "updated_at" TIMESTAMP DEFAULT (now() at time zone 'utc')
+);
+CREATE UNIQUE index "index_name_on_google_auth" on "google_auth" ("name");

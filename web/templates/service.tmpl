@@ -60,8 +60,8 @@
             {{ if $v.Action }}
             <tbody>
                 <tr>
-                    <td colspan="100">
-                        <textarea rows="10" cols="180">{{ $response }}</textarea>
+                    <td colspan="15">
+                        <textarea rows="10" cols="160">{{ $response }}</textarea>
                     </td>
                 </tr>
             </tbody>
@@ -70,5 +70,5 @@
         </table>
     </div>
 
-    {{ template "base.tmpl" . }}
+    {{ template "foot.tmpl" . }}
 {{ end }}
