@@ -87,7 +87,7 @@ func Me(c *gin.Context) interface{} {
 //Users Info
 func Users(c *gin.Context) {
 	username := Me(c)
-	qrCodeUrl, err := SearchQRcode(fmt.Sprint(username))
+	qrCodeUrl, err := SearchQRcodeUrl(fmt.Sprint(username))
 	if err != nil {
 		log.Printf("Users: %v", err)
 	}

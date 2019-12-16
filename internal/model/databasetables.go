@@ -17,3 +17,11 @@ type TableGoogleAuth struct {
 	Secret string	`json:"secret" form:"secret"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+
+type TableLdapPwdExpired struct {
+	Id int	`json:"id" form:"id"`
+	Name string	`json:"name" form:"name"`
+	PwdLastSet time.Time	`json:"pwd_last_set"`
+	PwdExpired time.Time	`json:"pwd_expired"`
+}

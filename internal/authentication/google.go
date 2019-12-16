@@ -129,7 +129,6 @@ func (this *GoogleAuth) GetQrcodeUrl(user, secret string) string {
 
 func (this *GoogleAuth) VerifyCode(secret, code string) (bool, error) {
 	_code, err := this.GetCode(secret)
-	fmt.Println(_code, code, err)
 	if err != nil {
 		return false, err
 	}

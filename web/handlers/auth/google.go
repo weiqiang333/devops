@@ -48,22 +48,30 @@ func CreateQRcode(c *gin.Context)  {
 	return
 }
 
-
-func SearchQRcode(name string) (string, error) {
+func SearchQRcodeSecret(name string) (string, error) {
 	sql := fmt.Sprintf("SELECT secret FROM google_auth WHERE name = '%s';", name)
 	db := database.Db()
 	row, err := db.Query(sql)
 	defer row.Close()
 	defer db.Close()
 	if err != nil {
-		return "", fmt.Errorf("SearchQRcode db.Query error for %s: %v", name, err)
+		return "", fmt.Errorf("SearchQRcodeSecret db.Query error for %s: %v", name, err)
 	}
 
 	var g model.TableGoogleAuth
 	row.Next()
 	if err := row.Scan(&g.Secret); err != nil {
-		return "", fmt.Errorf("SearchQRcode db rows scan error for %s: %v", name, err)
+		return "", fmt.Errorf("SearchQRcodeSecret db rows scan error for %s: %v", name, err)
 	}
-	qrCodeUrl := authentication.NewGoogleAuth().GetQrcodeUrl(name, g.Secret)
+	return g.Secret, nil
+}
+
+//SearchQRcodeUrl handler
+func SearchQRcodeUrl(name string) (string, error) {
+	secret, err := SearchQRcodeSecret(name)
+	if err != nil {
+		return "", err
+	}
+	qrCodeUrl := authentication.NewGoogleAuth().GetQrcodeUrl(name, secret)
 	return qrCodeUrl, nil
 }

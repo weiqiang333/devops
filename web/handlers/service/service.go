@@ -87,7 +87,6 @@ func serviceCmd(server, service, action string) string {
 
 
 func searchService(server string) []serverList {
-	//sql := fmt.Sprintf("SELECT server, status FROM server_list;")
 	servers := []serverList{}
 	sql := fmt.Sprintf(`SELECT server_list.server, server_list.name, server_list.app, server_list.pillar, server_list.status,
 		string_agg(service.service, ',') AS service, string_agg(service.status, ',') AS service_status
@@ -124,7 +123,7 @@ func searchService(server string) []serverList {
 
 // authorization LDAP
 func authorization(username string) bool {
-	groupDN, err := authentication.LdapGourp("sre")
+	groupDN, err := authentication.LdapGetDN("group","sre")
 	if err != nil {
 		log.Println(err.Error())
 		return false

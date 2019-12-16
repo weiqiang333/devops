@@ -1,6 +1,7 @@
 package web
 
 import (
+	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
 	"io"
 	"log"
 	"net/http"
@@ -62,15 +63,21 @@ func Web()  {
 		router.GET("/logout", auth.Logout)
 	}
 
-	router.GET("/service", service.ListService)
-
 	// Private
 	private := router.Group("/", auth.AuthRequired)
 	{
 		private.GET("/users", auth.Users)
 		private.GET("/users/createqr", auth.CreateQRcode)
 
+		private.GET("/service", service.ListService)
 		private.POST("/service", service.ListService)
+
+		ldap := private.Group("/ldapAdmin")
+		{
+			ldap.GET("/", ldapadmin.LadpAdmin)
+			ldap.GET("/modifyUserPwd", ldapadmin.GetModifyPwdPage)
+			ldap.POST("/modifyUserPwd", ldapadmin.ModifyUserPwd)
+		}
 	}
 
 
