@@ -14,14 +14,15 @@ sshcline:
   port: xxx
 
 cron:
-  update_server_list: '@every 3h'
-  update_service: '@every 10m'
+  update_server_list: '@every 12h'
+  update_service: '@every 3h'
+  update_pwd_expired: '0 0 0 * * *'
 
 # 登录认证 LDAP
 authentication:
   ldap:
     address: xxx
-    port: xxx
+    port: 389
     basedn: "dc=growingio,dc=com"
     bindusername: "cn=growingio,cn=users,dc=growingio,dc=com"
     bindpassword: xxx

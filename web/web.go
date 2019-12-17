@@ -1,7 +1,6 @@
 package web
 
 import (
-	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
 	"io"
 	"log"
 	"net/http"
@@ -10,12 +9,14 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/thinkerou/favicon"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/spf13/viper"
 
 	"github.com/weiqiang333/devops/internal/crontab"
 	"github.com/weiqiang333/devops/web/handlers/auth"
 	"github.com/weiqiang333/devops/web/handlers/service"
+	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
 )
 
 
@@ -29,6 +30,7 @@ func Web()  {
 	router := gin.New()
 	router.LoadHTMLGlob("web/templates/*")
 	router.Static("/static", "web/static")
+	router.Use(favicon.New("web/static/images/favicon.png"))
 
 	// LoggerWithFormatter middleware will write the logs to gin.DefaultWriter
 	// By default gin.DefaultWriter = os.Stdout
@@ -47,6 +49,9 @@ func Web()  {
 		)
 	}))
 	router.Use(gin.Recovery())
+	router.GET("/status", func(c *gin.Context) {
+		c.String(http.StatusOK, "ok")
+	})
 	router.Use(sessions.Sessions("mysession", sessions.NewCookieStore([]byte("secret"))))
 	{
 		router.GET("/", func(c *gin.Context) {
