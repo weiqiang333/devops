@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/thinkerou/favicon"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/spf13/viper"
 
@@ -29,6 +30,7 @@ func Web()  {
 	router := gin.New()
 	router.LoadHTMLGlob("web/templates/*")
 	router.Static("/static", "web/static")
+	router.Use(favicon.New("web/static/images/favicon.png"))
 
 	// LoggerWithFormatter middleware will write the logs to gin.DefaultWriter
 	// By default gin.DefaultWriter = os.Stdout
