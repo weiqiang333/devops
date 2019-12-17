@@ -16,3 +16,4 @@
 # add
 configs/production.yaml
 devops
+logs/*

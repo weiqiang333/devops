@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"fmt"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -53,10 +54,11 @@ func Login(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "login.tmpl", gin.H{"Authentication": "Failed to save session"})
 		return
 	}
-	c.Redirect(http.StatusMovedPermanently, "/")
+	c.Redirect(http.StatusFound, "/")
 }
 
 
+//Logout
 func Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	user := Me(c)
@@ -69,10 +71,12 @@ func Logout(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "login.tmpl", gin.H{"Authentication": "Failed to save session"})
 		return
 	}
+	log.Printf("Logout user for %s", user)
 	c.Redirect(http.StatusFound, "/")
 }
 
 
+//Me authentication username
 func Me(c *gin.Context) interface{} {
 	session := sessions.Default(c)
 	username := session.Get(userkey)
@@ -80,7 +84,16 @@ func Me(c *gin.Context) interface{} {
 }
 
 
-func Status(c *gin.Context) {
+//Users Info
+func Users(c *gin.Context) {
 	username := Me(c)
-	c.JSON(http.StatusOK, gin.H{"status": "You are logged in", "username": username})
+	qrCodeUrl, err := SearchQRcodeUrl(fmt.Sprint(username))
+	if err != nil {
+		log.Printf("Users: %v", err)
+	}
+	c.HTML(http.StatusOK, "users.hmpl", gin.H{
+		"users": "active",
+		"user": username,
+		"qrCodeUrl": qrCodeUrl,
+	})
 }

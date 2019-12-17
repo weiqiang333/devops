@@ -16,3 +16,22 @@ CREATE TABLE "service" (
   "service" VARCHAR,
   "status" VARCHAR(10) DEFAULT 'unknown'
 );
+
+
+CREATE TABLE "google_auth" (
+  "id" SERIAL NOT NULL PRIMARY KEY,
+  "name" VARCHAR(30) NOT NULL,
+  "secret"  VARCHAR(32) NOT NULL,
+  "created_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+  "updated_at" TIMESTAMP DEFAULT (now() at time zone 'utc')
+);
+CREATE UNIQUE index "index_name_on_google_auth" on "google_auth" ("name");
+
+
+CREATE TABLE "ldap_pwd_expired" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "name" VARCHAR(30) NOT NULL,
+    "pwd_last_set"  TIMESTAMP,
+    "pwd_expired"   TIMESTAMP
+);
+CREATE UNIQUE index "index_name_on_ldap_pwd_expired" on "ldap_pwd_expired" ("name");

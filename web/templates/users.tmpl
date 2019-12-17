@@ -1,0 +1,62 @@
+{{ define "users.hmpl" }}
+    {{ template "head.tmpl" . }}
+
+
+    <div class="jumbotron">
+        <h2><img src="/static/images/users/user.png" alt="" width="48" height="48">
+        {{.user}}
+        </h2>
+        <div class="panel-body">
+            <p style="font-size: 15px;">用户 ID: {{ .user }}</p>
+            <p style="font-size: 15px;">二次验证：</p>
+            {{ if .qrCodeUrl }}
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                    查看
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">二维码</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p><a href="{{ .qrCodeUrl }}" class="tooltip-test" title="" data-original-title="Tooltip" target="_blank">{{ .qrCodeUrl }}</a></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="publish-qr" class="btn btn-primary">
+                    重置
+                </button>
+            {{ else }}
+                <button type="button" id="publish-qr" class="btn btn-primary">
+                    创建
+                </button>
+            {{ end }}
+
+        </div>
+    </div>
+
+
+    <script>
+        var publishBtn = document.querySelector('#publish-qr');
+        publishBtn.onclick = function() {
+            fetch("/users/createqr", {
+                method: 'GET',
+            }).then(function(res){
+                return res.json()
+            }).then(data => {
+                alert((data["QRcodeURL"]))
+            });
+        }
+
+        $('#modal').modal(options)
+    </script>
+
+    {{ template "foot.tmpl" . }}
+{{ end }}

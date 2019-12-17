@@ -1,6 +1,7 @@
 package web
 
 import (
+	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
 	"io"
 	"log"
 	"net/http"
@@ -48,6 +49,13 @@ func Web()  {
 	router.Use(gin.Recovery())
 	router.Use(sessions.Sessions("mysession", sessions.NewCookieStore([]byte("secret"))))
 	{
+		router.GET("/", func(c *gin.Context) {
+			username := auth.Me(c)
+			c.HTML(http.StatusOK, "index.tmpl", gin.H{
+				"home": "active",
+				"user": username,
+			})
+		})
 		router.POST("/login", auth.Login)
 		router.GET("/login", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "login.tmpl", gin.H{})
@@ -55,21 +63,21 @@ func Web()  {
 		router.GET("/logout", auth.Logout)
 	}
 
-	router.GET("/", func(c *gin.Context) {
-		username := auth.Me(c)
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"home": "active",
-			"user": username,
-		})
-	})
-	router.GET("/service", service.ListService)
-
 	// Private
 	private := router.Group("/", auth.AuthRequired)
 	{
-		private.GET("/status", auth.Status)
+		private.GET("/users", auth.Users)
+		private.GET("/users/createqr", auth.CreateQRcode)
 
+		private.GET("/service", service.ListService)
 		private.POST("/service", service.ListService)
+
+		ldap := private.Group("/ldapAdmin")
+		{
+			ldap.GET("/", ldapadmin.LadpAdmin)
+			ldap.GET("/modifyUserPwd", ldapadmin.GetModifyPwdPage)
+			ldap.POST("/modifyUserPwd", ldapadmin.ModifyUserPwd)
+		}
 	}
 
 

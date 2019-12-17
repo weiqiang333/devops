@@ -1,14 +1,13 @@
 package authentication
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 
 	. "github.com/go-ldap/ldap/v3"
 	"github.com/spf13/viper"
 )
-
-var baseDN = viper.GetString("authentication.ldap.basedn")
 
 
 func ldapDial() (*Conn, error) {
@@ -21,6 +20,11 @@ func ldapDial() (*Conn, error) {
 	if err != nil {
 		log.Printf("Authentication for LDAP Dial: %v", err)
 		return nil, err
+	}
+	// Reconnect with TLS
+	err = l.StartTLS(&tls.Config{InsecureSkipVerify: true})
+	if err != nil {
+		return nil, fmt.Errorf("Authentication for LDAP StartTLS: %v", err)
 	}
 	err = l.Bind(bindusername, bindpassword)
 	if err != nil {
@@ -49,8 +53,9 @@ func LdapAuthentication(username, password string) bool {
 }
 
 
-// LdapGourp ladp 组用户信息获取
-func LdapGourp(groupname string) (string, error) {
+// LdapGetDN 获取 group/user DN 信息
+func LdapGetDN(class, name string) (string, error) {
+	baseDN := viper.GetString("authentication.ldap.basedn")
 	l, err := ldapDial()
 	defer l.Close()
 	if err != nil {
@@ -60,7 +65,7 @@ func LdapGourp(groupname string) (string, error) {
 	searchRequest := NewSearchRequest(
 		baseDN, // The base dn to search
 		ScopeWholeSubtree, NeverDerefAliases, 0, 0, false,
-		fmt.Sprintf("(&(objectClass=group)(CN=%s))", groupname),
+		fmt.Sprintf("(&(objectClass=%s)(CN=%s))", class, name),
 		[]string{"dn"},
 		nil,
 	)
@@ -71,14 +76,15 @@ func LdapGourp(groupname string) (string, error) {
 	}
 
 	if len(sr.Entries) != 1 {
-		return "", fmt.Errorf("Groups does not exist or too many entries returned: %s", groupname)
+		return "", fmt.Errorf("Groups does not exist or too many entries returned: %s", name)
 	}
 	return sr.Entries[0].DN, nil
 }
 
 
-// LdapGroupUser
+// LdapGroupUser 组内用户获取
 func LdapGroupUser(groupDN string) ([]string, error) {
+	baseDN := viper.GetString("authentication.ldap.basedn")
 	groupUser := []string{}
 	l, err := ldapDial()
 	defer l.Close()

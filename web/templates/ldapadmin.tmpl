@@ -1,0 +1,26 @@
+{{ define "ldapadmin.tmpl" }}
+        {{ template "head.tmpl" . }}
+
+
+    <div class="jumbotron">
+        <h3>您好! <span class="label label-danger">{{ .user }}</span></h3>
+        <hr />
+        <h3>密码即将<span class="label label-warning">过期</span>用户: <a href="/ldapAdmin/modifyUserPwd" class="small label label-info">修改密码</a></h3>
+        <table class="table table-hover table-bordered table-condensed">
+            <tr>
+                <th>User</th>
+                <th>Password Last Set</th>
+                <th>Password Expires</th>
+            </tr>
+            {{ range $pe := .pwdExpired }}
+            <tr>
+                <td>{{ $pe.Name }}</td>
+                <td>{{ $pe.PwdLastSet }}</td>
+                <td>{{ $pe.PwdExpired }}</td>
+            </tr>
+            {{ end }}
+        </table>
+    </div>
+
+        {{ template "foot.tmpl" . }}
+{{ end }}
