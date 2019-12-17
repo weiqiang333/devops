@@ -1,7 +1,6 @@
 package web
 
 import (
-	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
 	"io"
 	"log"
 	"net/http"
@@ -16,6 +15,7 @@ import (
 	"github.com/weiqiang333/devops/internal/crontab"
 	"github.com/weiqiang333/devops/web/handlers/auth"
 	"github.com/weiqiang333/devops/web/handlers/service"
+	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
 )
 
 
@@ -47,6 +47,9 @@ func Web()  {
 		)
 	}))
 	router.Use(gin.Recovery())
+	router.GET("/status", func(c *gin.Context) {
+		c.String(http.StatusOK, "ok")
+	})
 	router.Use(sessions.Sessions("mysession", sessions.NewCookieStore([]byte("secret"))))
 	{
 		router.GET("/", func(c *gin.Context) {
