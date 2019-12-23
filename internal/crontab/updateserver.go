@@ -7,10 +7,12 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
+
 	"github.com/weiqiang333/devops/internal/awscli"
 	"github.com/weiqiang333/devops/internal/database"
 	"github.com/weiqiang333/devops/internal/model"
 )
+
 
 func readsServerList() []model.Instance {
 	var instances = []model.Instance{}
@@ -96,6 +98,7 @@ func insertServerList(instance model.Instance) {
 		pillar = EXCLUDED.pillar,
 		uptime = EXCLUDED.uptime;`, instance.IpAddress, instance.Name, instance.App, instance.Pillar, instance.Status)
 	db := database.Db()
+	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
 	if err != nil {

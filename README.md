@@ -24,4 +24,5 @@ url: /service
 url: /ldapAdmin/
 - 密码过期用户提示
 - 密码修改
+- 遗忘密码
 ![](./docs/images/ldap-admin.png)

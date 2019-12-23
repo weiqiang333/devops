@@ -1,0 +1,72 @@
+{{ define "forgetPwd.tmpl" }}
+        {{ template "head.tmpl" . }}
+
+
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <img src="/static/images/GIO-log.svg" alt="GrowingIO"/>
+                <div class="caption">
+                    <h3 class="pager">重置用户密码！</h3>
+                    <form id="modifyForm" name="modifyForm">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">用户名</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="username" id="inputName" placeholder="Recipient's username">
+                                    <span class="input-group-addon">@growingio.com</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputCode" class="col-sm-3 control-label">邮箱/二次验证</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="qrcode" id="inputCode" placeholder="333333">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword" class="col-sm-3 control-label">新密码</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" name="password" id="inputPassword" placeholder="New Password">
+                            </div>
+                        </div>
+                    </form>
+                    <button class="btn btn-default" id="mailCode">获取验证码</button>
+                    <button class="btn btn-default" id="modifyUserPwd">提交修改</button>
+                </div><!--div class="caption" end -->
+            </div><!--div class="col-sm-10 col-md-6" end-->
+        </div><!--div row end-->
+    </div><!-- jumbotron -->
+
+    <script>
+    var mailCode = document.querySelector('#mailCode');
+    mailCode.onclick = function() {
+        let modifyForm = document.getElementById('modifyForm');
+        let formData = new FormData(modifyForm);
+        fetch("/ldapAdmin/forgetPwd/postMailVerificationCode", {
+            body: formData,
+            method: 'POST',
+        }).then(function(res){
+            return res.json()
+        }).then(data => {
+            alert((data["response"]))
+        });
+    }
+    var modifyUserPwd = document.querySelector('#modifyUserPwd');
+    modifyUserPwd.onclick = function() {
+        let modifyForm = document.getElementById('modifyForm');
+        let formData = new FormData(modifyForm);
+        fetch("/ldapAdmin/forgetPwd/modifyUserPwd", {
+            body: formData,
+            method: 'POST',
+        }).then(function(res){
+            return res.json()
+        }).then(data => {
+            alert((data["response"]))
+        });
+    }
+    </script>
+
+
+    {{ template "foot.tmpl" . }}
+{{ end }}

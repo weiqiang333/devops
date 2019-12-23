@@ -117,7 +117,7 @@ func (this *GoogleAuth) GetCode(secret string) (string, error) {
 
 
 func (this *GoogleAuth) GetQrcode(user, secret string) string {
-	return fmt.Sprintf("otpauth://totp/%s?secret=%s", user, secret)
+	return fmt.Sprintf("otpauth://totp/DevOps_%s?secret=%s", user, secret)
 }
 
 

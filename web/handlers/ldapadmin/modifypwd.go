@@ -2,30 +2,14 @@ package ldapadmin
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/weiqiang333/devops/web/handlers/auth"
 	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+
+	"github.com/weiqiang333/devops/web/handlers/auth"
 	"github.com/weiqiang333/devops/internal/authentication"
 )
-
-
-//modifyPwd 修改用户密码
-func modifyPwd(name, password string) error {
-	userDN, err := authentication.LdapGetDN("user", name)
-	if err != nil {
-		log.Printf("ModifyPwd LdapGetDN fail for %s: %v", name, err)
-		return err
-	}
-
-	err = authentication.LdapModifyPwd(userDN, password)
-	if err != nil {
-		log.Printf("ModifyPwd LdapModifyPwd fail for %s: %v", name, err)
-		return err
-	}
-	return nil
-}
 
 
 //ModifyUserPwd 修改用户密码 handler
@@ -59,7 +43,7 @@ func ModifyUserPwd(c *gin.Context) {
 		return
 	}
 
-	err = modifyPwd(user, password)
+	err = authentication.LdapModifyPwd(user, password)
 	if err != nil {
 		log.Printf("ModifyUserPwd fail, Please check if the password policy is met. %s; %v", user, err)
 		c.JSON(http.StatusRequestedRangeNotSatisfiable, gin.H{
