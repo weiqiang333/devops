@@ -26,3 +26,11 @@ authentication:
     basedn: "dc=growingio,dc=com"
     bindusername: "cn=growingio,cn=users,dc=growingio,dc=com"
     bindpassword: xxx
+
+# mail
+mail:
+  domain: growingio.com
+  host: smtp.qiye.163.com
+  port: 587
+  username: noreply@growingio.com
+  password: xxx
