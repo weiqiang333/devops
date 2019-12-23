@@ -90,6 +90,12 @@ func Users(c *gin.Context) {
 	qrCodeUrl, err := SearchQRcodeUrl(fmt.Sprint(username))
 	if err != nil {
 		log.Printf("Users: %v", err)
+		c.HTML(http.StatusInternalServerError, "users.hmpl", gin.H{
+			"users": "active",
+			"user": username,
+			"qrCodeUrl": "查询异常",
+		})
+		return
 	}
 	c.HTML(http.StatusOK, "users.hmpl", gin.H{
 		"users": "active",

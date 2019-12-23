@@ -31,9 +31,9 @@ func getServers() []string {
 	servers := []string{}
 	sql := fmt.Sprintf(`SELECT server FROM server_list;`)
 	db := database.Db()
+	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
-	defer db.Close()
 	if err != nil {
 		log.Printf("getServers search server error: %v", err)
 		return servers
@@ -53,9 +53,9 @@ func insertService(server string, service string)  {
 		INSERT INTO service (server, service)
 		VALUES ('%s', '%s');`, server, service)
 	db := database.Db()
+	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
-	defer db.Close()
 	if err != nil {
 		log.Printf("insert server_list error: %s %s - %v", server, service, err)
 	}
@@ -66,9 +66,9 @@ func deleteService(server string, service string)  {
 	sql := fmt.Sprintf(`
 		DELETE FROM service WHERE server = '%s' AND service = '%s';`, server, service)
 	db := database.Db()
+	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
-	defer db.Close()
 	if err != nil {
 		log.Printf("delete server_list error: %s %s - %v", server, service, err)
 	}
@@ -81,9 +81,9 @@ func selectService(server string) []string {
 		SELECT service FROM service WHERE server = '%s'
 	`, server)
 	db := database.Db()
+	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
-	defer db.Close()
 	if err != nil {
 		log.Printf("selectService error: %s - %v", server, err)
 	}

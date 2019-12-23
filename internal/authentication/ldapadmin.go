@@ -37,8 +37,25 @@ func ldapAdminDial() (*ldap.Conn, error) {
 }
 
 
-//ldapModifyPwd 修改用户密码
-func LdapModifyPwd(userDN, password string) error {
+//LdapModifyPwd 修改用户密码
+func LdapModifyPwd(name, password string) error {
+	userDN, err := LdapGetDN("user", name)
+	if err != nil {
+		log.Printf("ModifyPwd LdapGetDN fail for %s: %v", name, err)
+		return err
+	}
+
+	err = postModifyPwd(userDN, password)
+	if err != nil {
+		log.Printf("ModifyPwd LdapModifyPwd fail for %s: %v", name, err)
+		return err
+	}
+	return nil
+}
+
+
+//modifyPwd 修改用户密码
+func postModifyPwd(userDN, password string) error {
 	l, err := ldapAdminDial()
 	defer l.Close()
 	if err != nil {

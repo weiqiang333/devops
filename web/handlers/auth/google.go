@@ -24,25 +24,26 @@ func createSecret(name string) (string, error) {
 		secret = EXCLUDED.secret,
 		updated_at = EXCLUDED.updated_at;`, name, secret)
 	db := database.Db()
+	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
 	if err != nil {
-		return name, fmt.Errorf("insert google_auth error for %s: %v", name, err)
+		return "", fmt.Errorf("insert google_auth error for %s: %v", name, err)
 	}
-	qrCodeUrl := authentication.NewGoogleAuth().GetQrcodeUrl(name, secret)
-	return qrCodeUrl, nil
+	return secret, nil
 }
 
 
 //CreateQRcode
 func CreateQRcode(c *gin.Context)  {
 	name := Me(c)
-	qrCodeUrl, err := createSecret(fmt.Sprint(name))
+	secret, err := createSecret(fmt.Sprint(name))
 	if err != nil {
-		log.Printf("CreateQRcode error for %s: %s", name, qrCodeUrl)
+		log.Printf("CreateQRcode error for %s", name)
 		c.JSON(http.StatusNotImplemented, gin.H{"QR code URL:": err.Error()})
 		return
 	}
+	qrCodeUrl := authentication.NewGoogleAuth().GetQrcodeUrl(fmt.Sprint(name), secret)
 	log.Printf("CreateQRcode Success for %s", name)
 	c.JSON(http.StatusOK, gin.H{"QRcodeURL": qrCodeUrl})
 	return
@@ -51,9 +52,9 @@ func CreateQRcode(c *gin.Context)  {
 func SearchQRcodeSecret(name string) (string, error) {
 	sql := fmt.Sprintf("SELECT secret FROM google_auth WHERE name = '%s';", name)
 	db := database.Db()
+	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
-	defer db.Close()
 	if err != nil {
 		return "", fmt.Errorf("SearchQRcodeSecret db.Query error for %s: %v", name, err)
 	}

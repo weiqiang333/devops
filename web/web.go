@@ -49,9 +49,18 @@ func Web()  {
 		)
 	}))
 	router.Use(gin.Recovery())
-	router.GET("/status", func(c *gin.Context) {
-		c.String(http.StatusOK, "ok")
-	})
+	{
+		router.GET("/status", func(c *gin.Context) {
+			c.String(http.StatusOK, "ok")
+		})
+		forgetLdap := router.Group("/ldapAdmin")
+		{
+			forgetLdap.GET("/forgetPwd", auth.GetForgetPwd)
+			forgetLdap.POST("/forgetPwd/postMailVerificationCode", auth.PostMailVerificationCode)
+			forgetLdap.POST("/forgetPwd/modifyUserPwd", auth.ModifyUserPwd)
+		}
+	}
+
 	router.Use(sessions.Sessions("mysession", sessions.NewCookieStore([]byte("secret"))))
 	{
 		router.GET("/", func(c *gin.Context) {
