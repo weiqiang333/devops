@@ -28,7 +28,7 @@ func Web()  {
 	gin.DefaultWriter = io.MultiWriter(f)
 
 	router := gin.New()
-	router.LoadHTMLGlob("web/templates/*")
+	router.LoadHTMLGlob("web/templates/**/*")
 	router.Static("/static", "web/static")
 	router.Use(favicon.New("web/static/images/favicon.png"))
 
@@ -65,14 +65,14 @@ func Web()  {
 	{
 		router.GET("/", func(c *gin.Context) {
 			username := auth.Me(c)
-			c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			c.HTML(http.StatusOK, "base/index.tmpl", gin.H{
 				"home": "active",
 				"user": username,
 			})
 		})
 		router.POST("/login", auth.Login)
 		router.GET("/login", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "login.tmpl", gin.H{})
+			c.HTML(http.StatusOK, "user/login.tmpl", gin.H{})
 		})
 		router.GET("/logout", auth.Logout)
 	}

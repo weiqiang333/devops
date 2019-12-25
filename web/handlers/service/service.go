@@ -45,7 +45,7 @@ func ListService(c *gin.Context) {
 
 		if ! authorization(fmt.Sprint(username)) {
 			log.Printf("Info ListService action %s Currently not authorized for %s", action, username)
-			c.HTML(http.StatusLocked, "service.tmpl", gin.H{
+			c.HTML(http.StatusLocked, "serviceadmin/service.tmpl", gin.H{
 				"service": "active",
 				"server": servers,
 				"response": "Currently not authorized, please contact SRE",
@@ -55,7 +55,7 @@ func ListService(c *gin.Context) {
 		}
 
 		actionResponse := serviceCmd(server, service, action)
-		c.HTML(http.StatusOK, "service.tmpl", gin.H{
+		c.HTML(http.StatusOK, "serviceadmin/service.tmpl", gin.H{
 			"service": "active",
 			"server": servers,
 			"response": actionResponse,
@@ -64,7 +64,7 @@ func ListService(c *gin.Context) {
 		return
 	}
 	servers := searchService("")
-	c.HTML(http.StatusOK, "service.tmpl", gin.H{
+	c.HTML(http.StatusOK, "serviceadmin/service.tmpl", gin.H{
 		"service": "active",
 		"server": servers,
 		"user": username,

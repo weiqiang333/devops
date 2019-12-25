@@ -63,7 +63,7 @@ func ModifyUserPwd(c *gin.Context) {
 //GetModifyUserPwd
 func GetModifyPwdPage(c *gin.Context)  {
 	user := auth.Me(c)
-	c.HTML(http.StatusOK, "modifyUserPwd.tmpl", gin.H{
+	c.HTML(http.StatusOK, "ldapadmin/modifyUserPwd.tmpl", gin.H{
 		"ldapAdmin": "active",
 		"user": user,
 	})
