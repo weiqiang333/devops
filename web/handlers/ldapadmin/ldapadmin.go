@@ -16,7 +16,7 @@ import (
 func LadpAdmin(c *gin.Context)  {
 	username := auth.Me(c)
 	pwdExpired := searchPwdExpired()
-	c.HTML(http.StatusBadRequest, "ldapadmin.tmpl", gin.H{
+	c.HTML(http.StatusBadRequest, "ldapadmin/ldapadmin.tmpl", gin.H{
 		"ldapAdmin": "active",
 		"user": username,
 		"pwdExpired": pwdExpired,

@@ -1,5 +1,5 @@
-{{ define "modifyUserPwd.tmpl" }}
-    {{ template "head.tmpl" . }}
+{{ define "ldapadmin/modifyUserPwd.tmpl" }}
+    {{ template "base/head.tmpl" . }}
 
     <div class="jumbotron">
         <h3>修改用户密码</h3>
@@ -14,13 +14,13 @@
             <div class="form-group">
                 <label for="inputPassword" class="col-sm-2 control-label">新密码</label>
                 <div class="col-sm-10">
-                    <input type="password" class="form-control" name="password" id="inputPassword" value="Password">
+                    <input type="password" class="form-control" name="password" id="inputPassword" placeholder="New Password">
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputQRcode" class="col-sm-2 control-label">二次验证</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="qrcode" id="inputQRcode" value="333333">
+                    <input type="text" class="form-control" name="qrcode" id="inputQRcode" placeholder="333333">
                 </div>
             </div>
         </form>
@@ -43,5 +43,5 @@
         }
     </script>
 
-    {{ template "foot.tmpl" . }}
+    {{ template "base/foot.tmpl" . }}
 {{ end }}

@@ -1,5 +1,5 @@
-{{ define "users.hmpl" }}
-    {{ template "head.tmpl" . }}
+{{ define "user/users.tmpl" }}
+    {{ template "base/head.tmpl" . }}
 
 
     <div class="jumbotron">
@@ -64,5 +64,5 @@
         $('#modal').modal(options)
     </script>
 
-    {{ template "foot.tmpl" . }}
+    {{ template "base/foot.tmpl" . }}
 {{ end }}

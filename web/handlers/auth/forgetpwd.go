@@ -46,7 +46,7 @@ func PostMailVerificationCode(c *gin.Context)  {
 
 //GetForgetPwd 忘记密码页面
 func GetForgetPwd(c *gin.Context)  {
-	c.HTML(http.StatusOK, "forgetPwd.tmpl", gin.H{"ldapAdmin": "active",})
+	c.HTML(http.StatusOK, "ldapadmin/forgetPwd.tmpl", gin.H{"ldapAdmin": "active",})
 }
 
 
