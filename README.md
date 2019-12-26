@@ -1,6 +1,6 @@
 # devops
 devops 集成众多自动化运维工具
-![](./docs/images/architecture/DevOps系统架构图1.0.svg)
+![](./docs/images/architecture/DevOps系统架构图1.0.png)
 
 
 ### Authentication
