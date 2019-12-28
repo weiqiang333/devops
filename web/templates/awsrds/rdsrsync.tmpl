@@ -1,0 +1,47 @@
+{{ define "awsrds/rdsrsync.tmpl" }}
+    {{ template "base/head.tmpl" . }}
+
+
+    <div class="container">
+
+        <div class="blog-header">
+            <h1 class="blog-title">数据库同步中心</h1>
+            <p class="lead blog-description">欢迎使用 DevOps 平台. 为您同步数据库, 我们是认真的.</p>
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-8 blog-main">
+                <div class="blog-post">
+                    <h2 class="blog-post-title">数据库同步申请订单</h2>
+                    <p class="blog-post-meta">Last submitted in "{{ .lastCreate.CreatedAt }}" by <a href="#">{{ .lastCreate.Username }}</a></p>
+
+                    <table class="table table-hover table-bordered table-condensed">
+                        <tr>
+                            <th>已创建</th>
+                            <th>数据库名称</th>
+                            <th>申请 ID</th>
+                            <th>申请人</th>
+                            <th>申请状态</th>
+                        </tr>
+                        {{ range $wo := .rdsWorkorder }}
+                        <tr>
+                            <td>{{ $wo.CreatedAt }}</td>
+                            <td>{{ $wo.Database }}</td>
+                            <td><a href="/awsAdmin/rdsRsyncWorkorder/{{ $wo.Id }}">{{ $wo.Id }}</a></td>
+                            <td>{{ $wo.Username }}</td>
+                            <td><a href="/awsAdmin/rdsRsyncWorkorder/{{ $wo.Id }}">{{ $wo.OrderStatus }}</a></td>
+                        </tr>
+                        {{ end }}
+                    </table>
+                </div><!-- /.blog-post -->
+            </div><!-- /.blog-main -->
+
+            {{ template "awsrds/sidebar.tmpl" .}}
+
+        </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    {{ template "base/foot.tmpl" . }}
+{{ end }}

@@ -1,0 +1,48 @@
+{{ define "awsrds/sidebar.tmpl" }}
+<div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+    <div class="sidebar-module sidebar-module-inset">
+        <div class="blog-post">
+            <h4>说明</h4>
+            <p>同步数据库必须遵循以下原则：</p>
+            <ol>
+                <li>数据库名必须匹配"^(ci|qa)-.*"原则</li>
+                <li>同步操作必须有审核人同意.</li>
+                <li>上级审核人可覆盖.</li>
+                <li>强制审核人必须全票通过.</li>
+                <li>申请通过的订单24h有效期</li>
+            </ol>
+        </div><!-- /.blog-post -->
+    </div>
+    <div class="sidebar-module">
+        <h4>申请同步数据库</h4>
+        <form id="applyForm" name="applyForm">
+            <div class="form-group">
+                <div class="col-sm-15">
+                    <input type="text" class="form-control" name="databaseNmae" id="inputDatabase" placeholder="数据库名称 ci-easydata-k8s-opm">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-15">
+                    <input type="text" class="form-control" name="qrcode" id="inputQRcode" placeholder="二次验证码">
+                </div>
+            </div>
+        </form>
+        <button class="btn btn-default" id="rdsRsync">提交申请</button>
+    </div>
+</div><!-- /.blog-sidebar -->
+<script>
+var rdsRsync = document.querySelector('#rdsRsync');
+rdsRsync.onclick = function() {
+    let applyForm = document.getElementById('applyForm');
+    let formData = new FormData(applyForm);
+    fetch("/awsAdmin/rdsRsyncWorkorder", {
+        body: formData,
+        method: 'POST',
+    }).then(function(res){
+        return res.json()
+    }).then(data => {
+        alert((data["response"]))
+    });
+}
+</script>
+{{ end }}

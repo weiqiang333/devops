@@ -3,6 +3,7 @@ package web
 import (
 	"io"
 	"log"
+	"html/template"
 	"net/http"
 	"os"
 	"time"
@@ -17,6 +18,7 @@ import (
 	"github.com/weiqiang333/devops/web/handlers/auth"
 	"github.com/weiqiang333/devops/web/handlers/service"
 	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
+	"github.com/weiqiang333/devops/web/handlers/aws/rds"
 )
 
 
@@ -28,6 +30,9 @@ func Web()  {
 	gin.DefaultWriter = io.MultiWriter(f)
 
 	router := gin.New()
+	router.SetFuncMap(template.FuncMap{
+		"ifEqual": ifEqual,
+	})
 	router.LoadHTMLGlob("web/templates/**/*")
 	router.Static("/static", "web/static")
 	router.Use(favicon.New("web/static/images/favicon.png"))
@@ -92,13 +97,32 @@ func Web()  {
 			ldap.GET("/modifyUserPwd", ldapadmin.GetModifyPwdPage)
 			ldap.POST("/modifyUserPwd", ldapadmin.ModifyUserPwd)
 		}
-	}
 
+		aws := private.Group("/awsAdmin")
+		{
+			aws.GET("/rdsRsyncWorkorder", rds.GetSyncWorkorder)
+			aws.POST("/rdsRsyncWorkorder", rds.PostRsyncWorkorder)
+			aws.GET("/rdsRsyncWorkorder/:id", rds.GetOrderId)
+			aws.POST("/rdsRsyncWorkorder/:id", rds.PostApproval)
+		}
+	}
 
 	crontab.CronTab()
 
 	err := router.Run(viper.GetString("address")) // listen and serve on 0.0.0.0:8080
 	if err != nil {
 		log.Println(err.Error())
+	}
+}
+
+
+//ifEqual gin router SetFuncMap
+func ifEqual(a, b interface{}) string {
+	aa := fmt.Sprint(a)
+	bb := fmt.Sprint(b)
+	if aa == bb {
+		return aa
+	} else {
+		return ""
 	}
 }
