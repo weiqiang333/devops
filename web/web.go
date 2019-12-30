@@ -32,6 +32,7 @@ func Web()  {
 	router := gin.New()
 	router.SetFuncMap(template.FuncMap{
 		"ifEqual": ifEqual,
+		"formatAsDate": formatAsDate,
 	})
 	router.LoadHTMLGlob("web/templates/**/*")
 	router.Static("/static", "web/static")
@@ -125,4 +126,11 @@ func ifEqual(a, b interface{}) string {
 	} else {
 		return ""
 	}
+}
+
+func formatAsDate(date time.Time, timezone string) string {
+	if timezone == "utc" {
+		date = date.Add(time.Hour * 8)
+	}
+	return date.Format("2006-01-02 15:04:05")
 }

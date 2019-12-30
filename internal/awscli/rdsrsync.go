@@ -25,6 +25,9 @@ type SearchTableOrder struct {
 //CreateWorkorder 创建同步工单
 func CreateWorkorder(databaseName, username string) error {
 	match := viper.GetString("aws.rds.match")
+	if match == "" {
+		match = "ci-"
+	}
 	matched, _ := regexp.MatchString(fmt.Sprintf("^(%s).*", match), databaseName)
 	if ! matched {
 		return fmt.Errorf("CreateWorkorder fail: 你所输入的数据库目前并不支持")

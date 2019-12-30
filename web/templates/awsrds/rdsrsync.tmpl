@@ -14,7 +14,7 @@
             <div class="col-sm-8 blog-main">
                 <div class="blog-post">
                     <h2 class="blog-post-title">数据库同步申请订单</h2>
-                    <p class="blog-post-meta">Last submitted in "{{ .lastCreate.CreatedAt }}" by <a href="#">{{ .lastCreate.Username }}</a></p>
+                    <p class="blog-post-meta">Last submitted in "{{ formatAsDate .lastCreate.CreatedAt "utc" }}" by <a href="#">{{ .lastCreate.Username }}</a></p>
 
                     <table class="table table-hover table-bordered table-condensed">
                         <tr>
@@ -26,7 +26,7 @@
                         </tr>
                         {{ range $wo := .rdsWorkorder }}
                         <tr>
-                            <td>{{ $wo.CreatedAt }}</td>
+                            <td>{{ formatAsDate $wo.CreatedAt "utc" }}</td>
                             <td>{{ $wo.Database }}</td>
                             <td><a href="/awsAdmin/rdsRsyncWorkorder/{{ $wo.Id }}">{{ $wo.Id }}</a></td>
                             <td>{{ $wo.Username }}</td>
