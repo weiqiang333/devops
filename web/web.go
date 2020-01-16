@@ -1,24 +1,23 @@
 package web
 
 import (
+	"fmt"
+	"html/template"
 	"io"
 	"log"
-	"html/template"
 	"net/http"
 	"os"
 	"time"
-	"fmt"
 
-	"github.com/gin-gonic/gin"
-	"github.com/thinkerou/favicon"
 	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/thinkerou/favicon"
 
-	"github.com/weiqiang333/devops/internal/crontab"
 	"github.com/weiqiang333/devops/web/handlers/auth"
-	"github.com/weiqiang333/devops/web/handlers/service"
-	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
 	"github.com/weiqiang333/devops/web/handlers/aws/rds"
+	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
+	"github.com/weiqiang333/devops/web/handlers/service"
 )
 
 
@@ -109,8 +108,6 @@ func Web()  {
 			aws.POST("/rdsRsyncWorkorder/:id/rsync", rds.PostExecuteRsync)
 		}
 	}
-
-	crontab.CronTab()
 
 	err := router.Run(viper.GetString("address")) // listen and serve on 0.0.0.0:8080
 	if err != nil {
