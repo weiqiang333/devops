@@ -15,5 +15,6 @@
 
 # add
 configs/production.yaml
-devops
 logs/*
+devops
+devops-*
