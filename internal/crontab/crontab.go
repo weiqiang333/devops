@@ -27,6 +27,5 @@ func CronTab()  {
 	if err != nil {
 		log.Printf("cron run updatePwdExpired error %s:", err.Error())
 	}
-
 	c.Start()
 }

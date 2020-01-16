@@ -14,7 +14,23 @@
             <div class="col-sm-8 blog-main">
                 <div class="blog-post">
                     <h2 class="blog-post-title">数据库同步申请订单</h2>
-                    <h4>申请信息：</h4>
+                    <h4>申请信息：
+                    {{ if ifEqual .rdsWorkorder.OrderStatus "pass" }}
+                        <button class="btn btn-primary" id="submitRsync">执行同步</button>
+                        <script>
+                            var submitRsync = document.querySelector('#submitRsync');
+                            submitRsync.onclick = function() {
+                                fetch("/awsAdmin/rdsRsyncWorkorder/{{ .rdsWorkorder.Id }}/rsync", {
+                                    method: 'POST',
+                                }).then(function(res){
+                                    return res.json()
+                                }).then(data => {
+                                    alert((data["response"]))
+                                });
+                            }
+                        </script>
+                    {{ end }}
+                    </h4>
                     <table class="table table-hover table-condensed">
                         <tr>
                             <th>申请时间</th>
@@ -28,10 +44,11 @@
                             <td>{{ .rdsWorkorder.Database }}</td>
                             <td>{{ .rdsWorkorder.Username }}</td>
                             <td>{{ .rdsWorkorder.OrderStatus }}</td>
-                            <td>{{ if ifEqual .rdsWorkorder.OrderStatus "rsync" }}{{ formatAsDate .rdsWorkorder.PassAt "utc" }}{{ end }}</td>
+                            <td>{{ if ifEqual .rdsWorkorder.OrderStatus "pass" }}{{ formatAsDate .rdsWorkorder.PassAt "utc" }}{{ end }}</td>
                         </tr>
                     </table>
 
+                    <br/>
                     <h4>审批流程：</h4>
                     <table class="table table-hover table-bordered table-condensed">
                         <tr>
@@ -61,6 +78,7 @@
                         {{ end }}
                     </table>
 
+                    <br/>
                     <h4>审批记录：</h4>
                     <table class="table table-hover table-bordered table-condensed">
                         <tr>

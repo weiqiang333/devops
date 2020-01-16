@@ -105,6 +105,8 @@ func Web()  {
 			aws.POST("/rdsRsyncWorkorder", rds.PostRsyncWorkorder)
 			aws.GET("/rdsRsyncWorkorder/:id", rds.GetOrderId)
 			aws.POST("/rdsRsyncWorkorder/:id", rds.PostApproval)
+			aws.GET("/rdsRsyncWorkorder/:id/rsync", rds.GetRsyncDegree)
+			aws.POST("/rdsRsyncWorkorder/:id/rsync", rds.PostExecuteRsync)
 		}
 	}
 

@@ -74,7 +74,6 @@ func GetOrderId(c *gin.Context)  {
 		return
 	}
 	rdsWorkorder, err := awscli.SearchWorkorder(id)
-	awscli.IfRsyncStatus(id)
 	if err != nil {
 		log.Printf("GetOrderId SearchOrder fail: %v", err)
 	}
@@ -117,6 +116,57 @@ func PostApproval(c *gin.Context)  {
 		c.Redirect(http.StatusFound, fmt.Sprintf("./%v", workorderId))
 		return
 	}
+	if awscli.IfRsyncStatus(workorderId) {
+		awscli.UpdateWorkorderStatus(workorderId, "pass")
+	}
 	c.Redirect(http.StatusFound, fmt.Sprintf("./%v", workorderId))
+	return
+}
+
+
+//GetRsyncDegree
+func GetRsyncDegree(c *gin.Context)  {
+	workorderId, err := strconv.Atoi(c.Param("id"))
+	fmt.Println(workorderId, err)
+}
+
+
+//PostExecuteRsync 执行同步申请
+func PostExecuteRsync(c *gin.Context)  {
+	username := fmt.Sprintln(auth.Me(c))
+	workorderId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusNotImplemented, gin.H{
+			"response": fmt.Sprintf("你访问了一个不合规的工单 %v", workorderId),
+		})
+		return
+	}
+
+	if ! awscli.IfRsyncStatus(workorderId) {
+		c.JSON(http.StatusNotImplemented, gin.H{
+			"response": fmt.Sprintf("您提交了审核不合规的工单 id: %v", workorderId),
+		})
+		return
+	}
+
+	wl, err := awscli.SearchhWorkorderLogs(workorderId)
+	if err == nil {
+		c.JSON(http.StatusNotImplemented, gin.H{
+			"response": fmt.Sprintf("申请已经存在：%s 创建于 %s 目前状态为 %s", wl.Username, wl.CreatedAt, wl.Status),
+		})
+		return
+	}
+
+	awscli.UpdateWorkorderStatus(workorderId, "rsync")
+	if err = awscli.CreateWorkorderLogs(workorderId, username); err != nil {
+		c.JSON(http.StatusNotImplemented, gin.H{
+			"response": fmt.Sprintf("提交同步执行失败：%v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"response": fmt.Sprintf("提交成功"),
+	})
 	return
 }

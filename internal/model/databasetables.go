@@ -50,3 +50,16 @@ type TableRdsRsyncOrderLogs struct {
 	Status	bool	`json:"status" form:"status"`
 	CreatedAt	time.Time	`json:"created_at" form:"created_at"`
 }
+
+type TableRdsRsyncWorkorderLogs struct {
+	Id int	`json:"id" form:"id"`
+	Workorderid	int	`json:"workorderid" form:"workorderid"`
+	Username	string	`json:"username" form:"username"`
+	CreatedAt	time.Time	`json:"created_at" form:"created_at"`
+	GetSnapshotAt	time.Time	`json:"get_snapshot_at" form:"get_snapshot_at"`
+	DeleteAt	time.Time	`json:"delete_at" form:"delete_at"`
+	RestoreAt	time.Time	`json:"restore_at" form:"restore_at"`
+	ModifyConfigAt	time.Time	`json:"modify_config_at" form:"modify_config_at"`
+	ExecuteSqlAt	time.Time	`json:"execute_sql_at" form:"execute_sql_at"`
+	Status	string	`json:"status" form:"status"`
+}

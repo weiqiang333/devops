@@ -60,3 +60,17 @@ CREATE TABLE "rds_rsync_order_logs" (
     "status" BOOLEAN,
     "created_at" TIMESTAMP DEFAULT (now() at time zone 'utc')
 );
+
+CREATE TABLE "rds_rsync_workorder_logs" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "workorderid" INT NOT NULL,
+    "username" VARCHAR(30) NOT NULL,
+    "created_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "get_snapshot_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "delete_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "restore_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "modify_config_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "execute_sql_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "status" VARCHAR(30) NOT NULL
+);
+CREATE UNIQUE index "index_workorderid_on_rds_rsync_workorder_logs" on "rds_rsync_workorder_logs" ("workorderid");

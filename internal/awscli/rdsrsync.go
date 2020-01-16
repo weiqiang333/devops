@@ -155,7 +155,7 @@ func InsertOrderLog(workorderId int, orderId int, status bool) error {
 
 
 //IfRsyncStatus
-func IfRsyncStatus(workorderId int) {
+func IfRsyncStatus(workorderId int) bool {
 	sql := fmt.Sprintf(`
 		SELECT all_count
 		FROM (
@@ -163,7 +163,7 @@ func IfRsyncStatus(workorderId int) {
 			FROM rds_rsync_order_logs ol
 			JOIN rds_rsync_order o
 			ON o.id = ol.orderid
-			WHERE ol.workorderid=2 AND ol.status=TRUE
+			WHERE ol.workorderid=%v AND ol.status=TRUE
 			AND o.id IN (
 				SELECT id
 				FROM rds_rsync_order
@@ -179,25 +179,74 @@ func IfRsyncStatus(workorderId int) {
 					FROM rds_rsync_order
 					WHERE database='default')
 			) all_count
-		WHERE ok_count=all_count;`)
-	updateSql := fmt.Sprintf(`
-		UPDATE rds_rsync_workorder
-		SET order_status = 'rsync', pass_at = now() at time zone 'utc'
-		WHERE id=%v;`, workorderId)
+		WHERE ok_count=all_count;`, workorderId)
 	db := database.Db()
 	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
 	if err != nil {
 		log.Printf("select rds_rsync_order sqlAll error: %v - %v", workorderId, err)
-		return
+		return false
 	}
 	if row.Next() {
-		_, err = db.Query(updateSql)
-		if err != nil {
-			log.Printf("update rds_rsync_workorder order_status error: %v - %v", workorderId, err)
-			return
-		}
+		return true
+	}
+	return false
+}
+
+
+//UpdateWorkorderStatus 更新工单状态
+func UpdateWorkorderStatus(workorderId int, status string) {
+	sql := fmt.Sprintf(`
+		UPDATE rds_rsync_workorder
+		SET order_status = '%s', pass_at = now() at time zone 'utc'
+		WHERE id=%v;`, status, workorderId)
+	db := database.Db()
+	defer db.Close()
+	row, err := db.Query(sql)
+	defer row.Close()
+	if err != nil {
+		log.Printf("update rds_rsync_workorder order_status error: %v - %v", workorderId, err)
+		return
 	}
 	return
+}
+
+
+//SearchWorkorderLogs
+func SearchhWorkorderLogs(workorderId int) (model.TableRdsRsyncWorkorderLogs, error)  {
+	wl := model.TableRdsRsyncWorkorderLogs{}
+	sql := fmt.Sprintf(`SELECT * FROM rds_rsync_workorder_logs WHERE workorderid=%v;`, workorderId)
+	db := database.Db()
+	defer db.Close()
+	row, err := db.Query(sql)
+	defer row.Close()
+	if err != nil {
+		log.Printf("select rds_rsync_workorder_logs error: %v", err)
+		return wl, fmt.Errorf("select rds_rsync_workorder fail: %v", err)
+	}
+	if ! row.Next() {
+		return wl, fmt.Errorf("SearchhWorkorderLogs next error, %v", err)
+	}
+	if err = row.Scan(&wl.Id, &wl.Workorderid, &wl.Username, &wl.CreatedAt, &wl.GetSnapshotAt, &wl.DeleteAt, &wl.RestoreAt, &wl.ModifyConfigAt, &wl.ExecuteSqlAt, &wl.Status); err != nil {
+		return wl, fmt.Errorf("SearchhWorkorderLogs Scan error, %v", err)
+	}
+	return wl, nil
+}
+
+
+//CreateWorkorderLogs
+func CreateWorkorderLogs(workorderId int, username string) error {
+	sql := fmt.Sprintf(`
+		INSERT INTO rds_rsync_workorder_logs (workorderid, username, status)
+		VALUES (%v, '%s', 'create');`, workorderId, username)
+	db := database.Db()
+	defer db.Close()
+	row, err := db.Query(sql)
+	defer row.Close()
+	if err != nil {
+		log.Printf("insert rds_rsync_workorder_logs error: %v %s - %v", workorderId, username, err)
+		return fmt.Errorf("insert rds_rsync_workorder_logs fail: %v", err)
+	}
+	return nil
 }
