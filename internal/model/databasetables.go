@@ -25,3 +25,41 @@ type TableLdapPwdExpired struct {
 	PwdLastSet time.Time	`json:"pwd_last_set"`
 	PwdExpired time.Time	`json:"pwd_expired"`
 }
+
+
+type TableRdsRsyncWorkorder struct {
+	Id int	`json:"id" form:"id"`
+	Database string	`json:"database" form:"database"`
+	Username string	`json:"username" form:"username"`
+	CreatedAt time.Time	`json:"created_at" form:"created_at"`
+	PassAt time.Time	`json:"pass_at" form:"pass_at"`
+	OrderStatus string	`json:"order_status" form:"order_status"`
+}
+
+type TableRdsRsyncOrder struct {
+	Id int	`json:"id" form:"id"`
+	Database string	`json:"database" form:"database"`
+	Priority int	`json:"priority" form:"priority"`
+	AuthorizedUser string	`json:"authorized_user" form:"authorized_user"`
+}
+
+type TableRdsRsyncOrderLogs struct {
+	Id int	`json:"id" form:"id"`
+	Workorderid int	`json:"workorderid" form:"workorderid"`
+	Orderid int	`json:"orderid" form:"orderid"`
+	Status	bool	`json:"status" form:"status"`
+	CreatedAt	time.Time	`json:"created_at" form:"created_at"`
+}
+
+type TableRdsRsyncWorkorderLogs struct {
+	Id int	`json:"id" form:"id"`
+	Workorderid	int	`json:"workorderid" form:"workorderid"`
+	Username	string	`json:"username" form:"username"`
+	CreatedAt	time.Time	`json:"created_at" form:"created_at"`
+	GetSnapshotAt	time.Time	`json:"get_snapshot_at" form:"get_snapshot_at"`
+	DeleteAt	time.Time	`json:"delete_at" form:"delete_at"`
+	RestoreAt	time.Time	`json:"restore_at" form:"restore_at"`
+	ModifyConfigAt	time.Time	`json:"modify_config_at" form:"modify_config_at"`
+	ExecuteSqlAt	time.Time	`json:"execute_sql_at" form:"execute_sql_at"`
+	Status	string	`json:"status" form:"status"`
+}

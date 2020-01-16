@@ -26,19 +26,11 @@ func ModifyUserPwd(c *gin.Context) {
 		return
 	}
 
-	secret, err := auth.SearchQRcodeSecret(user)
-	if err != nil {
-		log.Printf("ModifyUserPwd fail, Please confirm to enable secondary verification: %s; %v", user, err)
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"response": "ModifyUserPwd fail, Please confirm to enable secondary verification",
-		})
-		return
-	}
-	ok, err := authentication.NewGoogleAuth().VerifyCode(secret, qrcode)
+	ok, err := auth.VerifyCode(user, qrcode)
 	if err != nil || ! ok {
-		log.Printf("ModifyUserPwd fail, Secondary verification failed, please verify again: %s; %v", user, err)
+		log.Printf("ModifyUserPwd fail: %s; %v", user, err)
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"response": "ModifyUserPwd fail, Secondary verification failed, please verify again",
+			"response": err.Error(),
 		})
 		return
 	}

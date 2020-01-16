@@ -3,6 +3,7 @@ package web
 import (
 	"io"
 	"log"
+	"html/template"
 	"net/http"
 	"os"
 	"time"
@@ -17,6 +18,7 @@ import (
 	"github.com/weiqiang333/devops/web/handlers/auth"
 	"github.com/weiqiang333/devops/web/handlers/service"
 	"github.com/weiqiang333/devops/web/handlers/ldapadmin"
+	"github.com/weiqiang333/devops/web/handlers/aws/rds"
 )
 
 
@@ -28,6 +30,10 @@ func Web()  {
 	gin.DefaultWriter = io.MultiWriter(f)
 
 	router := gin.New()
+	router.SetFuncMap(template.FuncMap{
+		"ifEqual": ifEqual,
+		"formatAsDate": formatAsDate,
+	})
 	router.LoadHTMLGlob("web/templates/**/*")
 	router.Static("/static", "web/static")
 	router.Use(favicon.New("web/static/images/favicon.png"))
@@ -92,8 +98,17 @@ func Web()  {
 			ldap.GET("/modifyUserPwd", ldapadmin.GetModifyPwdPage)
 			ldap.POST("/modifyUserPwd", ldapadmin.ModifyUserPwd)
 		}
-	}
 
+		aws := private.Group("/awsAdmin")
+		{
+			aws.GET("/rdsRsyncWorkorder", rds.GetSyncWorkorder)
+			aws.POST("/rdsRsyncWorkorder", rds.PostRsyncWorkorder)
+			aws.GET("/rdsRsyncWorkorder/:id", rds.GetOrderId)
+			aws.POST("/rdsRsyncWorkorder/:id", rds.PostApproval)
+			aws.GET("/rdsRsyncWorkorder/:id/rsync", rds.GetRsyncDegree)
+			aws.POST("/rdsRsyncWorkorder/:id/rsync", rds.PostExecuteRsync)
+		}
+	}
 
 	crontab.CronTab()
 
@@ -101,4 +116,23 @@ func Web()  {
 	if err != nil {
 		log.Println(err.Error())
 	}
+}
+
+
+//ifEqual gin router SetFuncMap
+func ifEqual(a, b interface{}) string {
+	aa := fmt.Sprint(a)
+	bb := fmt.Sprint(b)
+	if aa == bb {
+		return aa
+	} else {
+		return ""
+	}
+}
+
+func formatAsDate(date time.Time, timezone string) string {
+	if timezone == "utc" {
+		date = date.Add(time.Hour * 8)
+	}
+	return date.Format("2006-01-02 15:04:05")
 }

@@ -15,8 +15,8 @@
             {{ range $pe := .pwdExpired }}
             <tr>
                 <td>{{ $pe.Name }}</td>
-                <td>{{ $pe.PwdLastSet }}</td>
-                <td>{{ $pe.PwdExpired }}</td>
+                <td>{{ formatAsDate $pe.PwdLastSet "utc" }}</td>
+                <td>{{ formatAsDate $pe.PwdExpired "utc" }}</td>
             </tr>
             {{ end }}
         </table>

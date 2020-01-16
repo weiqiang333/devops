@@ -76,3 +76,16 @@ func SearchQRcodeUrl(name string) (string, error) {
 	qrCodeUrl := authentication.NewGoogleAuth().GetQrcodeUrl(name, secret)
 	return qrCodeUrl, nil
 }
+
+
+//VerifyCode 验证码
+func VerifyCode(user, qrcode string) (bool, error) {
+	secret, err := SearchQRcodeSecret(user)
+	if err != nil {
+		log.Printf("VerifyCode fail, Please confirm to enable secondary verification: %s; %v", user, err)
+		return false, fmt.Errorf("VerifyCode fail, Please confirm to enable secondary verification")
+	}
+	ok, err := authentication.NewGoogleAuth().VerifyCode(secret, qrcode)
+	log.Printf("VerifyCode fail, %v", err)
+	return ok, fmt.Errorf("VerifyCode fail")
+}

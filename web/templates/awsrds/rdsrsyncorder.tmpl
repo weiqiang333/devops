@@ -1,0 +1,109 @@
+{{ define "awsrds/rdsrsyncorder.tmpl" }}
+    {{ template "base/head.tmpl" . }}
+
+
+    <div class="container">
+
+        <div class="blog-header">
+            <h1 class="blog-title">数据库同步中心</h1>
+            <p class="lead blog-description">欢迎使用 DevOps 平台. 为您同步数据库, 我们是认真的.</p>
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-8 blog-main">
+                <div class="blog-post">
+                    <h2 class="blog-post-title">数据库同步申请订单</h2>
+                    <h4>申请信息：
+                    {{ if ifEqual .rdsWorkorder.OrderStatus "pass" }}
+                        <button class="btn btn-primary" id="submitRsync">执行同步</button>
+                        <script>
+                            var submitRsync = document.querySelector('#submitRsync');
+                            submitRsync.onclick = function() {
+                                fetch("/awsAdmin/rdsRsyncWorkorder/{{ .rdsWorkorder.Id }}/rsync", {
+                                    method: 'POST',
+                                }).then(function(res){
+                                    return res.json()
+                                }).then(data => {
+                                    alert((data["response"]))
+                                });
+                            }
+                        </script>
+                    {{ end }}
+                    </h4>
+                    <table class="table table-hover table-condensed">
+                        <tr>
+                            <th>申请时间</th>
+                            <th>数据库</th>
+                            <th>申请人</th>
+                            <th>订单状态</th>
+                            <th>申请通过时间</th>
+                        </tr>
+                        <tr {{ if ifEqual .rdsWorkorder.OrderStatus "done" }}class="success"{{ else }}class="info"{{ end }}>
+                            <td>{{ formatAsDate .rdsWorkorder.CreatedAt "utc" }}</td>
+                            <td>{{ .rdsWorkorder.Database }}</td>
+                            <td>{{ .rdsWorkorder.Username }}</td>
+                            <td>{{ .rdsWorkorder.OrderStatus }}</td>
+                            <td>{{ if ifEqual .rdsWorkorder.OrderStatus "pass" }}{{ formatAsDate .rdsWorkorder.PassAt "utc" }}{{ end }}</td>
+                        </tr>
+                    </table>
+
+                    <br/>
+                    <h4>审批流程：</h4>
+                    <table class="table table-hover table-bordered table-condensed">
+                        <tr>
+                            <th>审核优先级</th>
+                            <th>审核人</th>
+                            <th>批准动作</th>
+                        </tr>
+                        {{ $user := .user }}
+                        {{ $workorderId := .rdsWorkorder.Id }}
+                        {{ range $ro := .rdsOrder }}
+                        <tr {{ if ifEqual $ro.AuthorizedUser $user }}class="danger"{{ end }}>
+                            <td>{{ $ro.Priority }}</td>
+                            <td>{{ $ro.AuthorizedUser }}</td>
+                            <td>
+                            {{ if ifEqual $ro.Status "true" }}
+                                <p class="text-success">以同意</p>
+                            {{ else }}
+                                {{ if ifEqual $ro.AuthorizedUser $user }}
+                                <form class="caption" method="post" action="./{{ $workorderId }}?orderId={{ $ro.Id }}&approvalStatus=reject"><input class="btn" type="submit" value="拒绝"/></form>
+                                <form method="post" action="./{{ $workorderId }}?orderId={{ $ro.Id }}&approvalStatus=agree"><input class="btn" type="submit" value="同意"/></form>
+                                {{ else }}
+                                <p class="text-muted">{{ $ro.Status }}</p>
+                                {{ end }}
+                            {{ end }}
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </table>
+
+                    <br/>
+                    <h4>审批记录：</h4>
+                    <table class="table table-hover table-bordered table-condensed">
+                        <tr>
+                            <th>审核时间</th>
+                            <th>审核优先级</th>
+                            <th>审核人</th>
+                            <th>批准动作</th>
+                        </tr>
+                        {{ range $ol := .orderLogs }}
+                        <tr {{ if ifEqual $ol.AuthorizedUser $user }}class="danger"{{ end }}>
+                            <td>{{ formatAsDate $ol.CreatedAt "utc" }}</td>
+                            <td>{{ $ol.Priority }}</td>
+                            <td>{{ $ol.AuthorizedUser }}</td>
+                            <td>{{ $ol.Status }}</td>
+                        </tr>
+                        {{ end }}
+                    </table>
+                </div><!-- /.blog-post -->
+            </div><!-- /.blog-main -->
+
+            {{ template "awsrds/sidebar.tmpl" .}}
+
+        </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    {{ template "base/foot.tmpl" . }}
+{{ end }}

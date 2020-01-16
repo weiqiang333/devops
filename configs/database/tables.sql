@@ -35,3 +35,42 @@ CREATE TABLE "ldap_pwd_expired" (
     "pwd_expired"   TIMESTAMP
 );
 CREATE UNIQUE index "index_name_on_ldap_pwd_expired" on "ldap_pwd_expired" ("name");
+
+
+CREATE TABLE "rds_rsync_order" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "database" VARCHAR NOT NULL,
+    "priority" INT DEFAULT 10,
+    "authorized_user" VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE "rds_rsync_workorder" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "database" VARCHAR NOT NULL,
+    "username" VARCHAR(30) NOT NULL,
+    "created_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "pass_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "order_status" VARCHAR(20) DEFAULT 'review'
+);
+
+CREATE TABLE "rds_rsync_order_logs" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "workorderid" INT NOT NULL,
+    "orderid" INT NOT NULL,
+    "status" BOOLEAN,
+    "created_at" TIMESTAMP DEFAULT (now() at time zone 'utc')
+);
+
+CREATE TABLE "rds_rsync_workorder_logs" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "workorderid" INT NOT NULL,
+    "username" VARCHAR(30) NOT NULL,
+    "created_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "get_snapshot_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "delete_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "restore_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "modify_config_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "execute_sql_at" TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "status" VARCHAR(30) NOT NULL
+);
+CREATE UNIQUE index "index_workorderid_on_rds_rsync_workorder_logs" on "rds_rsync_workorder_logs" ("workorderid");
