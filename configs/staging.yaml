@@ -17,6 +17,7 @@ cron:
   update_server_list: '@every 12h'
   update_service: '@every 3h'
   update_pwd_expired: '0 0 0 * * *'
+  update_aws_inastance_types: '@every 24h'
 
 # 登录认证 LDAP
 authentication:

@@ -3,8 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 	"os"
 
+	"github.com/emicklei/go-restful"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 
@@ -14,6 +18,19 @@ import (
 
 func main()  {
 	crontab.CronTab()
+
+	container := restful.NewContainer()
+	api := new(restful.WebService)
+	api.Path("/crontab/v1")
+	api.Produces(restful.MIME_JSON)
+	api.Route(api.GET("/hello").To(hello))
+	container.Add(api)
+	server := &http.Server{Addr: ":8081", Handler: container}
+	log.Fatal(server.ListenAndServe())
+}
+
+func hello(req *restful.Request, resp *restful.Response) {
+	io.WriteString(resp, "world")
 }
 
 func init()  {

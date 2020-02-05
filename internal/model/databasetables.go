@@ -63,3 +63,28 @@ type TableRdsRsyncWorkorderLogs struct {
 	ExecuteSqlAt	time.Time	`json:"execute_sql_at" form:"execute_sql_at"`
 	Status	string	`json:"status" form:"status"`
 }
+
+//TableAwsInstanceTypes tables aws_instance_types
+type TableAwsInstanceTypes struct {
+	Id	int	`json:"id"`
+	InstanceType	string	`json:"instance_type"`
+	Vcpus	int64	`json:"vcpus"`
+	Memory	int64	`json:"memory"`
+	UpdateAt	time.Time	`json:"update_at"`
+}
+
+//TableAwsVolumes tables aws_volumes
+type TableAwsVolumes struct {
+	Id	int	`json:"id"`
+	DiskId	string	`json:"disk_id"`
+	CreateAt	time.Time	`json:"create_at"`
+	Size	int64	`json:"size"`	
+	Iops	int64	`json:"iops"`
+	State	string	`json:"state"`
+	Type	string	`json:"type"`
+	TagName	string	`json:"tag_name"`
+	TagApp	string	`json:"tag_app"`
+	TagEnv	string	`json:"tag_env"`
+	TagPillar	string	`json:"tag_pillar"`
+	UpdateAt	time.Time	`json:"update_at"`
+}

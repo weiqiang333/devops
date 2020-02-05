@@ -74,3 +74,29 @@ CREATE TABLE "rds_rsync_workorder_logs" (
     "status" VARCHAR(30) NOT NULL
 );
 CREATE UNIQUE index "index_workorderid_on_rds_rsync_workorder_logs" on "rds_rsync_workorder_logs" ("workorderid");
+
+
+CREATE TABLE "aws_instance_types" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "instance_type" VARCHAR(30) NOT NULL,
+    "vcpus" INT NOT NULL,
+    "memory" INT NOT NULL,
+    "update_at" TIMESTAMP DEFAULT (now() at time zone 'utc')
+)
+CREATE UNIQUE index "index_instance_type_on_aws_instance_types" on "aws_instance_types" ("instance_type");
+
+CREATE TABLE "aws_volumes" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "disk_id"   VARCHAR NOT NULL,
+    "create_at" TIMESTAMP,
+    "size"  INT NOT NULL,
+    "iops"  INT,
+    "state"   VARCHAR,
+    "type"  VARCHAR,
+    "tag_name"  VARCHAR,
+    "tag_app"   VARCHAR,
+    "tag_env"   VARCHAR,
+    "tag_pillar"    VARCHAR,
+    "update_at" TIMESTAMP DEFAULT (now() at time zone 'utc')
+)
+CREATE UNIQUE index "index_disk_id_on_aws_volumes" on "aws_volumes" ("disk_id");

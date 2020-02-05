@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
 
@@ -14,25 +13,10 @@ import (
 )
 
 
-func readsServerList() []model.Instance {
+func readsAWSServer() []model.Instance {
 	var instances = []model.Instance{}
 	svc := awscli.AwsCli()
-	input := &ec2.DescribeInstancesInput{
-		Filters: []*ec2.Filter{
-			{
-				Name: aws.String("tag:Env"),
-				Values: []*string{
-					aws.String("Production"),
-				},
-			},
-			{
-				Name: aws.String("instance-state-name"),
-				Values: []*string{
-					aws.String("running"),
-				},
-			},
-		},
-	}
+	input := &ec2.DescribeInstancesInput{}
 	result, err := svc.DescribeInstances(input)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
@@ -49,26 +33,28 @@ func readsServerList() []model.Instance {
 	}
 	for _, reservations := range result.Reservations {
 		for _, instance := range reservations.Instances {
-			name, app, pillar := "", "", ""
+			//env, pillar, app, name := "", "", "", ""
+			name := ""
 			for _, tag := range instance.Tags{
 				if *tag.Key == "Name" {
 					name = *tag.Value
 					continue
 				}
-				if *tag.Key == "App" {
-					app = *tag.Value
-					continue
-				}
-				if *tag.Key == "Pillar" {
-					pillar = *tag.Value
-				}
+				//if *tag.Key == "App" {
+				//	app = *tag.Value
+				//	continue
+				//}
+				//if *tag.Key == "Pillar" {
+				//	pillar = *tag.Value
+				//}
+				//if *tag.Key == "Env" {
+				//	env = *tag.Value
+				//}
 			}
 			instances = append(instances, model.Instance{
-				IpAddress: *instance.PrivateIpAddress,
+				Address: *instance.PrivateIpAddress,
 				Name: name,
-				App: app,
-				Pillar: pillar,
-				Status: "true",
+				State: *instance.State.Name,
 			})
 		}
 	}
@@ -76,10 +62,10 @@ func readsServerList() []model.Instance {
 }
 
 
-//UpdateServerList server list update
-func UpdateServerList()  {
+//UpdateCmdbServer server list update
+func UpdateCmdbServer() {
 	log.Println("start update service_list tables")
-	instances := readsServerList()
+	instances := readsAWSServer()
 	for _, instance := range instances{
 		insertServerList(instance)
 	}
@@ -96,12 +82,12 @@ func insertServerList(instance model.Instance) {
 		name = EXCLUDED.name,
 		app = EXCLUDED.app,
 		pillar = EXCLUDED.pillar,
-		uptime = EXCLUDED.uptime;`, instance.IpAddress, instance.Name, instance.App, instance.Pillar, instance.Status)
+		uptime = EXCLUDED.uptime;`, instance.Address, instance.Name)
 	db := database.Db()
 	defer db.Close()
 	row, err := db.Query(sql)
 	defer row.Close()
 	if err != nil {
-		log.Printf("insert server_list error: %s - %v", instance.IpAddress, instance.Status, err)
+		log.Printf("insert server_list error: %s - %v", instance.Address, instance.State, err)
 	}
 }
