@@ -63,3 +63,12 @@ type TableRdsRsyncWorkorderLogs struct {
 	ExecuteSqlAt	time.Time	`json:"execute_sql_at" form:"execute_sql_at"`
 	Status	string	`json:"status" form:"status"`
 }
+
+type ReleaseJobs struct {
+	Id int	`json:"id" form:"id"`
+	JobName	string	`json:"jobname"`
+	JobUrl	string	`json:"joburl"`
+	JobHook	string	`json:"jobhook"`
+	UpdatedAt	time.Time	`json:"updated_at"`
+	LastExecuteAt	time.Time	`json:"last_execute_at"`
+}

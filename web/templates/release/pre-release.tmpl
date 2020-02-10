@@ -1,0 +1,48 @@
+{{ define "release/pre-release.tmpl" }}
+    {{ template "base/head.tmpl" . }}
+
+
+    <div class="jumbotron">
+        <h1>发布中心</h1>
+        <hr>
+        <table class="table table-hover table-condensed">
+        <form method="post" id="pre-release">
+            <tr>
+                <th>服务名称</th>
+                <th>Jenkins 地址</th>
+                <th>上次执行</th>
+            </tr>
+        {{ range $job := .releaseJobs }}
+            <tr>
+                <td>
+            <label class="checkbox">
+                <input type="checkbox" name="job" value="{{ $job.JobName }}"> {{ $job.JobName }}</td>
+                <td><a href="{{ $job.JobUrl }}" target="_blank">Jenkins</a></td>
+                <td>{{ if $job.LastExecuteAt }}{{ formatAsDate $job.LastExecuteAt "utc" }}{{ else }}无{{ end}}</td>
+            </label>
+            </tr>
+        {{ end }}
+<!--            <input class="btn btn-default" type="submit" value="触发构建" accept="right">-->
+        </form>
+        <button class="btn btn-default" id="releasePreFrom">触发构建</button>
+        </table>
+    </div>
+
+    <script>
+        var modifyUserPwd = document.querySelector('#releasePreFrom');
+        modifyUserPwd.onclick = function() {
+            let preRelease = document.getElementById('pre-release');
+            let formData = new FormData(preRelease);
+            fetch("/release/pre-release", {
+                body: formData,
+                method: 'POST',
+            }).then(function(res){
+                return res.json()
+            }).then(data => {
+                alert((data["response"]))
+            });
+        }
+    </script>
+
+    {{ template "base/foot.tmpl" . }}
+{{ end }}
