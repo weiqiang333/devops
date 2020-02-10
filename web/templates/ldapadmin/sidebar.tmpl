@@ -1,0 +1,35 @@
+{{ define "ldapadmin/sidebar.tmpl" }}
+    <div class="col-sm-3">
+        <div class="sidebar-module sidebar-module-inset">
+            <div class="blog-post">
+                <h4>说明</h4>
+                <p>LDAP 用户密码将影响您正常使用：
+                    Wifi、VPN、Jenkins... 等内部工具</p>
+            </div><!-- /.blog-post -->
+        </div>
+        <br/>
+        <div class="sidebar-module">
+            <h5>二次验证</h5>
+            <ol>
+                <li>二次验证码访问<a href="/users">个人中心</a>使用</li>
+                <li>邮箱验证码</li>
+            </ol>
+        </div>
+    </div><!-- col-sm-3 -->
+
+    <script>
+    var rdsRsync = document.querySelector('#rdsRsync');
+    rdsRsync.onclick = function() {
+        let applyForm = document.getElementById('applyForm');
+        let formData = new FormData(applyForm);
+        fetch("/awsAdmin/rdsRsyncWorkorder", {
+            body: formData,
+            method: 'POST',
+        }).then(function(res){
+            return res.json()
+        }).then(data => {
+            alert((data["response"]))
+        });
+    }
+    </script>
+{{ end }}

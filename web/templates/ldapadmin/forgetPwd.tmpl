@@ -1,10 +1,10 @@
 {{ define "ldapadmin/forgetPwd.tmpl" }}
         {{ template "base/head.tmpl" . }}
 
-
-    <div class="jumbotron">
+<div class="container">
+    <div class="jumbotron col-sm-8">
         <div class="row">
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-10">
                 <img src="/static/images/GIO-log.svg" alt="GrowingIO"/>
                 <div class="caption">
                     <h3 class="pager">重置用户密码！</h3>
@@ -36,8 +36,10 @@
                 </div><!--div class="caption" end -->
             </div><!--div class="col-sm-10 col-md-6" end-->
         </div><!--div row end-->
-    </div><!-- jumbotron -->
+    </div><!-- jumbotron col-sm-8 -->
 
+    {{ template "ldapadmin/sidebar.tmpl" .}}
+</div><!-- /.container -->
     <script>
     var mailCode = document.querySelector('#mailCode');
     mailCode.onclick = function() {
