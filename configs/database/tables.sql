@@ -74,3 +74,14 @@ CREATE TABLE "rds_rsync_workorder_logs" (
     "status" VARCHAR(30) NOT NULL
 );
 CREATE UNIQUE index "index_workorderid_on_rds_rsync_workorder_logs" on "rds_rsync_workorder_logs" ("workorderid");
+
+
+CREATE TABLE "release_jobs" (
+    "id"    SERIAL NOT NULL PRIMARY KEY,
+    "jobname"   VARCHAR NOT NULL,
+    "joburl"    VARCHAR NOT NULL,
+    "jobhook"   VARCHAR NOT NULL,
+    "updated_at"    TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    "last_execute_at"   TIMESTAMP
+);
+CREATE UNIQUE index "index_jobname_on_release_jobs" on "release_jobs" ("jobname");

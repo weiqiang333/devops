@@ -71,6 +71,12 @@
                             <li><a href="/awsAdmin/rdsRsyncWorkorder">RDS Rsync</a></li>
                         </ul>
                     </li>
+                    <li {{ if .release }}class="active"{{ end }} class="dropdown btn-group">
+                        <a href="/release" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Release<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/release/pre-release">Pre Release</a></li>
+                        </ul>
+                    </li>
                     <li {{ if .service }}class="active"{{ end }}><a href="/service">Service Admin</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
