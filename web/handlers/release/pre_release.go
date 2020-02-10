@@ -16,7 +16,7 @@ import (
 )
 
 
-//PostPreRelease 将掉 jenkins 钩子触发编译
+//PostPreRelease 调用 jenkins 钩子触发编译
 func PostPreRelease(c *gin.Context)  {
 	username := fmt.Sprint(auth.Me(c))
 	jobs := c.PostFormArray("job")

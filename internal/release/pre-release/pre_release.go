@@ -13,6 +13,7 @@ import (
 
 //GetJobs 获取 jobs
 func GetJobs(job string) ([]model.ReleaseJobs, error) {
+	// job 为："'backend', 'frontend', 'accounts'" 或 ""
 	sql := fmt.Sprintf(`SELECT * FROM release_jobs;`)
 	if job != "" {
 		sql = fmt.Sprintf(`SELECT * FROM release_jobs WHERE jobname IN (%s);`, job)
@@ -24,7 +25,7 @@ func GetJobs(job string) ([]model.ReleaseJobs, error) {
 	defer row.Close()
 	if err != nil {
 		log.Printf("select release_jobs error: %v", err)
-		return releaseJobs, fmt.Errorf("seleact fail")
+		return releaseJobs, fmt.Errorf("select fail")
 	}
 
 	for row.Next() {
@@ -32,6 +33,7 @@ func GetJobs(job string) ([]model.ReleaseJobs, error) {
 		err = row.Scan(&releaseJob.Id, &releaseJob.JobName, &releaseJob.JobUrl, &releaseJob.JobHook, &releaseJob.UpdatedAt, &releaseJob.LastExecuteAt)
 		if err != nil {
 			log.Printf("GetJobs Scan fail: %v", err)
+			continue
 		}
 		releaseJobs = append(releaseJobs, releaseJob)
 	}
@@ -50,7 +52,7 @@ func PushJobs(username string, jobs []model.ReleaseJobs) string {
 		resp, err := client.Get(url)
 		status += fmt.Sprintf("%s: %s\n", job.JobName, resp.Status)
 		if err != nil {
-			log.Printf("release PushJobs fail %s %s: %v", url, resp.Status, err)
+			log.Printf("release PushJobs fail %s %s: %v", job.JobName, resp.Status, err)
 			continue
 		}
 		updateJobLastExecuteTime(job.JobName)
@@ -70,6 +72,6 @@ func updateJobLastExecuteTime(job string)  {
 	row, err := db.Query(sql)
 	defer row.Close()
 	if err != nil {
-		log.Printf("UPDATE release_jobs error for updateJobLastExecuteTime: %s - %v", err)
+		log.Printf("UPDATE release_jobs error for updateJobLastExecuteTime: %s - %v", job, err)
 	}
 }

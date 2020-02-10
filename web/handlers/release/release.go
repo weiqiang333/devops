@@ -1,9 +1,11 @@
 package release
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/weiqiang333/devops/web/handlers/auth"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	
+	"github.com/weiqiang333/devops/web/handlers/auth"
 )
 
 
