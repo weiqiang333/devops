@@ -86,6 +86,9 @@ func VerifyCode(user, qrcode string) (bool, error) {
 		return false, fmt.Errorf("VerifyCode fail, Please confirm to enable secondary verification")
 	}
 	ok, err := authentication.NewGoogleAuth().VerifyCode(secret, qrcode)
-	log.Printf("VerifyCode fail, %v", err)
-	return ok, fmt.Errorf("VerifyCode fail")
+	if err != nil {
+		log.Printf("VerifyCode fail, %v", err)
+		return ok, fmt.Errorf("VerifyCode fail")
+	}
+	return ok, nil
 }
