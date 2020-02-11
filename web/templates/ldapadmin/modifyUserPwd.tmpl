@@ -1,7 +1,8 @@
 {{ define "ldapadmin/modifyUserPwd.tmpl" }}
     {{ template "base/head.tmpl" . }}
 
-    <div class="jumbotron">
+<div class="container">
+    <div class="col-sm-8 jumbotron">
         <h3>修改用户密码</h3>
         <hr />
         <form id="modifyForm" name="modifyForm">
@@ -25,7 +26,10 @@
             </div>
         </form>
         <button class="btn btn-default" id="modifyUserPwd">提交修改</button>
-    </div><!-- jumbotron -->
+    </div><!-- col-sm-8 jumbotron -->
+
+    {{ template "ldapadmin/sidebar.tmpl" .}}
+</div><!-- /.container -->
 
     <script>
         var modifyUserPwd = document.querySelector('#modifyUserPwd');

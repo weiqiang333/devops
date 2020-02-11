@@ -78,11 +78,12 @@ func readsServerList() []model.Instance {
 
 //UpdateServerList server list update
 func UpdateServerList()  {
-	log.Println("start update service_list tables")
+	log.Println("start update service_list tables start")
 	instances := readsServerList()
 	for _, instance := range instances{
 		insertServerList(instance)
 	}
+	log.Println("start update service_list tables done")
 }
 
 

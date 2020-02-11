@@ -13,6 +13,7 @@ import (
 )
 
 func alarmPwdExpired() {
+	log.Println("cron alarm ladp password expired start")
 	alarmPwdExpiredToken := viper.GetString("cron.alarm_pwd_expired_token")
 	pwdExpireds, err := selectPwdExpired()
 	if err != nil {
@@ -25,6 +26,7 @@ func alarmPwdExpired() {
 	if err != nil {
 		log.Println(err)
 	}
+	log.Println("cron alarm ladp password expired done")
 }
 
 func createMessage(pwdExpireds []model.TableLdapPwdExpired) (message string) {
@@ -33,7 +35,8 @@ func createMessage(pwdExpireds []model.TableLdapPwdExpired) (message string) {
 		message += fmt.Sprintf("\t\t%v\t\t%s\t\t%s\n", i, v.Name, v.PwdExpired.Format("2006-01-02 15:04:05"))
 	}
 	message += fmt.Sprintf("LDAP 用户密码将影响您正常使用：Wifi、VPN、Jenkins、Consul、Zabbix 等内部工具.\n" +
-		"重置/忘记密码，可以通过 https://devops-infra.growingio.com/ldapAdmin/ 进行操作")
+		"重置/忘记密码，可以通过 https://devops-infra.growingio.com/ldapAdmin/ 进行操作\n" +
+		"\t除了办公网络外，可通过 VPN、easyconnect 等方式访问")
 	return message
 }
 
