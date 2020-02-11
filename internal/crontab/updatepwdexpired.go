@@ -13,6 +13,7 @@ import (
 
 //通过 pwdLastSet 获取180天前修改，在未来一周过期用户
 func updatePwdExpired() {
+	log.Println("cron update ladp password expired start")
 	ts := time.Now().AddDate(0, -6, 7).UnixNano() / 1e6
 	tsNT := utcNT(ts)
 	res, err := authentication.LdapGetPwdLastSet(tsNT)
@@ -34,7 +35,7 @@ func updatePwdExpired() {
 		}
 		insertPwdExpired(name, formatTimestamp(ntUTC(tsSet) / 1000), formatTimestamp(ntUTC(tsExp) / 1000))
 	}
-	log.Println("updatePwdExpired Success")
+	log.Println("cron update ladp password expired done")
 }
 
 
