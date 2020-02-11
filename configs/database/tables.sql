@@ -82,6 +82,6 @@ CREATE TABLE "release_jobs" (
     "joburl"    VARCHAR NOT NULL,
     "jobhook"   VARCHAR NOT NULL,
     "updated_at"    TIMESTAMP DEFAULT (now() at time zone 'utc'),
-    "last_execute_at"   TIMESTAMP
+    "last_execute_at"   TIMESTAMP DEFAULT '0001-01-01 00:00:00 +0000'
 );
 CREATE UNIQUE index "index_jobname_on_release_jobs" on "release_jobs" ("jobname");
