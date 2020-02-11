@@ -38,6 +38,7 @@ func PostMailVerificationCode(c *gin.Context)  {
 	//发送
 	if err := mailcli.PostMailCode(name, code); err != nil {
 		c.JSON(http.StatusNotImplemented, gin.H{"response": err.Error()})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"response": "Send successfully"})
 	return
