@@ -30,7 +30,7 @@ func ModifyUserPwd(c *gin.Context) {
 	if err != nil || ! ok {
 		log.Printf("ModifyUserPwd fail: %s; %v", user, err)
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"response": err.Error(),
+			"response": fmt.Sprintf("VerifyCode fail; %s", err.Error()),
 		})
 		return
 	}
