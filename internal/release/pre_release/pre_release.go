@@ -1,3 +1,7 @@
+/*
+	pre release, 获取 jobs 和 触发 jobs 两种方法。
+	用于上线前触发 job 构建操作
+ */
 package pre_release
 
 import (
@@ -41,8 +45,8 @@ func GetJobs(job string) ([]model.ReleaseJobs, error) {
 }
 
 
-//PushJobs
-func PushJobs(username string, jobs []model.ReleaseJobs) string {
+//TriggerBuildJobs 调用 Jenkins 钩子, 触发构建
+func TriggerBuildJobs(username string, jobs []model.ReleaseJobs) string {
 	status := ""
 	client := http.Client{
 		Timeout: 2 * time.Second,

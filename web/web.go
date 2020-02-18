@@ -114,6 +114,8 @@ func Web()  {
 			releases.GET("/", release.GetRelease)
 			releases.GET("/pre-release", release.GetPreRelease)
 			releases.POST("/pre-release", release.PostPreRelease)
+			releases.GET("/pre-release/admin", release.GetPreReleaseAdmin)
+			releases.POST("/pre-release/admin", release.PostPreReleaseAdmin)
 		}
 	}
 
