@@ -43,7 +43,7 @@ func ListService(c *gin.Context) {
 		action, _ := c.GetPostForm("action")
 		servers := searchService(server)
 
-		if ! authorization(fmt.Sprint(username)) {
+		if ! authentication.SecurityGroupAuthorization(fmt.Sprint(username)) {
 			log.Printf("Info ListService action %s Currently not authorized for %s", action, username)
 			c.HTML(http.StatusLocked, "serviceadmin/service.tmpl", gin.H{
 				"service": "active",
@@ -118,34 +118,4 @@ func searchService(server string) []serverList {
 		}
 	}
 	return servers
-}
-
-
-// authorization LDAP
-func authorization(username string) bool {
-	groupDN, err := authentication.LdapGetDN("group","sre")
-	if err != nil {
-		log.Println(err.Error())
-		return false
-	}
-
-	users, err := authentication.LdapGroupUser(groupDN)
-	if err != nil {
-		log.Println(err.Error())
-		return false
-	}
-	return recursionUsers(username, users)
-}
-
-
-// recursionUsers 确认用户授权在用户组中
-func recursionUsers(username string, users []string) bool {
-	if len(users) == 0 {
-		return false
-	}
-	if username == users[0] {
-		return true
-	} else  {
-		return recursionUsers(username, users[1:])
-	}
 }

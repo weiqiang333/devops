@@ -1,0 +1,66 @@
+{{ define "release/pre-release-admin.tmpl" }}
+    {{ template "base/head.tmpl" . }}
+
+
+    <div class="jumbotron">
+        <h1>发布中心</h1><a href="/release/pre-release/admin" class="pull-right">管理员</a>
+        <hr>
+        <table class="table table-hover">
+            <tr>
+                <th>服务名称</th>
+                <th>Job Url</th>
+                <th>Job Hook</th>
+                <th>按钮</th>
+                <th>更新</th>
+            </tr>
+            <tr>
+                <form method="post" target="_blank">
+                    <td>
+                        <div class="form-group">
+                            <input class="form-control" name="jobName"></input>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" cols="100" name="jobUrl"></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" cols="100" name="jobHook"></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="submit" value="新增 Job" class="btn btn-primary"></input>
+                    </td>
+                </form>
+                    <td></td>
+            </tr>
+        {{ range $job := .releaseJobs }}
+            <tr>
+                <form method="post" target="_blank">
+                    <td>
+                        <input type="text" name="jobName" value="{{ $job.JobName }}" readonly>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" cols="100" name="jobUrl">{{ $job.JobUrl }}</textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" cols="100" name="jobHook">{{ $job.JobHook }}</textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="submit" value="提交修改" class="btn btn-primary"></input>
+                    </td>
+                </form>
+                <td>{{ formatAsDate $job.UpdatedAt "utc" }}</td>
+            </tr>
+        {{ end }}
+        </table>
+    </div>
+
+    {{ template "base/foot.tmpl" . }}
+{{ end }}

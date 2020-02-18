@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/weiqiang333/devops/web/handlers/auth"
-	pre_release "github.com/weiqiang333/devops/internal/release/pre-release"
+	"github.com/weiqiang333/devops/internal/release/pre_release"
 )
 
 
@@ -38,10 +38,11 @@ func PostPreRelease(c *gin.Context)  {
 		})
 		return
 	}
-	status := pre_release.PushJobs(username, releaseJobs)
+	status := pre_release.TriggerBuildJobs(username, releaseJobs)
 	c.JSON(http.StatusOK, gin.H{
 		"response": status,
 	})
+	return
 }
 
 
@@ -55,10 +56,12 @@ func GetPreRelease(c *gin.Context)  {
 			"release": "action",
 			"error": fmt.Sprintf("jobs 获取异常 %v", err),
 		})
+		return
 	}
 	c.HTML(http.StatusOK, "release/pre-release.tmpl", gin.H{
 		"user": username,
 		"release": "action",
 		"releaseJobs": releaseJobs,
 	})
+	return
 }
