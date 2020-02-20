@@ -3,11 +3,17 @@
 
 
     <div class="jumbotron">
-        <h1>发布中心</h1>
-        <a class="btn btn-default" href="/release/pre-release/admin" role="button">管理员</a>
+        <h1>发布中心
+            <a class="btn btn-default btn-xs" href="/release/pre-release/admin" role="button">管理员</a>
+        </h1>
+
         <hr>
         <table class="table table-hover table-condensed">
         <form method="post" id="pre-release">
+            <div class="form-group">
+                <label for="RELEASE_NOTE">RELEASE_NOTE</label>
+                <input type="text" class="form-control" name="RELEASE_NOTE" placeholder="发布 Release Note 链接">
+            </div>
             <tr>
                 <th>服务名称</th>
                 <th>Jenkins 地址</th>
@@ -17,7 +23,7 @@
             <tr>
                 <td>
             <label class="checkbox">
-                <input type="checkbox" name="job" value="{{ $job.JobName }}"> {{ $job.JobName }}</td>
+                <input type="checkbox" name="job" value="{{ $job.JobName }}">{{ $job.JobName }}</td>
                 <td><a href="{{ $job.JobUrl }}" target="_blank">Jenkins</a></td>
                 <td>{{ if $job.LastExecuteAt }}{{ formatAsDate $job.LastExecuteAt "utc" }}{{ else }}无{{ end}}</td>
             </label>
@@ -25,8 +31,20 @@
         {{ end }}
 <!--            <input class="btn btn-default" type="submit" value="触发构建" accept="right">-->
         </form>
-        <button class="btn btn-default" id="releasePreFrom">触发构建</button>
+        <button class="btn btn-primary btn-lg" id="releasePreFrom">触发构建</button>
         </table>
+    </div>
+    <div class="page-header">
+        <h1>Notes</h1>
+    </div>
+    <div class="well">
+        <p>Release 管控.</p>
+        <ol>
+            <li>GIT_BRANCH 默认必要为 master, 特殊需求请上 <a href="http://jenkins.infra.growingio.com" target="_blank">Jenkins</a> 操作</li>
+            <li>BUILD_ENABLED 默认必须为 true</li>
+            <li>ACTION 默认必须为 build</li>
+        </ol>
+        <p>Pre Release 为预编译，只进行编译打包，不进行发布</p>
     </div>
 
     <script>
