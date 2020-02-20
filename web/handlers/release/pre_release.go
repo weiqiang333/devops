@@ -20,6 +20,7 @@ import (
 func PostPreRelease(c *gin.Context)  {
 	username := fmt.Sprint(auth.Me(c))
 	jobs := c.PostFormArray("job")
+	releaseNote := c.PostForm("RELEASE_NOTE")
 	log.Printf("%s PostPreRelease 提交将执行预编译操作：%v", username, jobs)
 	if len(jobs) == 0 {
 		c.JSON(http.StatusOK, gin.H{
@@ -38,7 +39,7 @@ func PostPreRelease(c *gin.Context)  {
 		})
 		return
 	}
-	status := pre_release.TriggerBuildJobs(username, releaseJobs)
+	status := pre_release.TriggerBuildJobs(username, releaseJobs, releaseNote)
 	c.JSON(http.StatusOK, gin.H{
 		"response": status,
 	})

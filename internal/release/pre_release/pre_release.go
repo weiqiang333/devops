@@ -46,13 +46,13 @@ func GetJobs(job string) ([]model.ReleaseJobs, error) {
 
 
 //TriggerBuildJobs 调用 Jenkins 钩子, 触发构建
-func TriggerBuildJobs(username string, jobs []model.ReleaseJobs) string {
+func TriggerBuildJobs(username string, jobs []model.ReleaseJobs, releaseNote string) string {
 	status := ""
 	client := http.Client{
 		Timeout: 2 * time.Second,
 	}
 	for _, job := range jobs {
-		url := fmt.Sprintf("%s&BUILD_USER=%s", job.JobHook, username)
+		url := fmt.Sprintf("%s&BUILD_USER=%s&RELEASE_NOTE=%s", job.JobHook, username, releaseNote)
 		resp, err := client.Get(url)
 		status += fmt.Sprintf("%s: %s\n", job.JobName, resp.Status)
 		if err != nil {
