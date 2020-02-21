@@ -18,3 +18,5 @@ configs/production.yaml
 logs/*
 devops
 devops-*
+bin/*
+devops.zip
