@@ -48,12 +48,13 @@ func PostPreReleaseAdmin(c *gin.Context) {
 	jobName := c.PostForm("jobName")
 	jobUrl := c.PostForm("jobUrl")
 	jobHook := c.PostForm("jobHook")
+	jobView := c.PostForm("jobView")
 	if len(jobName) == 0 || len(jobUrl) == 0 || len(jobHook) == 0 {
 		c.String(http.StatusBadRequest, "请正确提交")
 		return
 	}
 
-	err := pre_release.InsertReleaseJob(jobName, jobUrl, jobHook)
+	err := pre_release.InsertReleaseJob(jobName, jobUrl, jobHook, jobView)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "发生内部错误：" + err.Error())
 		return

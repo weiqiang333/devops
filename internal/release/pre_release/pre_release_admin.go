@@ -9,17 +9,18 @@ import (
 
 
 //InsertReleaseJob
-func InsertReleaseJob(jobName, jobUrl, jobHook string) error {
+func InsertReleaseJob(jobName, jobUrl, jobHook, jobView string) error {
 	sql := fmt.Sprintf(`
 		INSERT INTO release_jobs
-			(jobname, joburl, jobhook, updated_at)
-		VALUES ('%s', '%s', '%s', now() at time zone 'utc')
+			(jobname, joburl, jobhook, updated_at, jobview)
+		VALUES ('%s', '%s', '%s', now() at time zone 'utc', '%s')
 		ON CONFLICT (jobname)
 		DO UPDATE SET
 			joburl = EXCLUDED.joburl,
 			jobhook = EXCLUDED.jobhook,
-			updated_at = EXCLUDED.updated_at;
-	`, jobName, jobUrl, jobHook)
+			updated_at = EXCLUDED.updated_at,
+			jobview = EXCLUDED.jobview;
+	`, jobName, jobUrl, jobHook, jobView)
 	db := database.Db()
 	defer db.Close()
 	row, err := db.Query(sql)

@@ -34,7 +34,7 @@ func GetJobs(job string) ([]model.ReleaseJobs, error) {
 
 	for row.Next() {
 		releaseJob := model.ReleaseJobs{}
-		err = row.Scan(&releaseJob.Id, &releaseJob.JobName, &releaseJob.JobUrl, &releaseJob.JobHook, &releaseJob.UpdatedAt, &releaseJob.LastExecuteAt)
+		err = row.Scan(&releaseJob.Id, &releaseJob.JobName, &releaseJob.JobUrl, &releaseJob.JobHook, &releaseJob.UpdatedAt, &releaseJob.LastExecuteAt, &releaseJob.JobView)
 		if err != nil {
 			log.Printf("GetJobs Scan fail: %v", err)
 			continue
