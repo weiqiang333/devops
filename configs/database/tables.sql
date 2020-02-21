@@ -81,6 +81,7 @@ CREATE TABLE "release_jobs" (
     "jobname"   VARCHAR NOT NULL,
     "joburl"    VARCHAR NOT NULL,
     "jobhook"   VARCHAR NOT NULL,
+    "jobview"   VARCHAR NOT NULL DEFAULT 'Frontend and Backend',
     "updated_at"    TIMESTAMP DEFAULT (now() at time zone 'utc'),
     "last_execute_at"   TIMESTAMP DEFAULT '0001-01-01 00:00:00 +0000'
 );

@@ -16,6 +16,7 @@
             </div>
             <tr>
                 <th>服务名称</th>
+                <th>view</th>
                 <th>Jenkins 地址</th>
                 <th>上次执行</th>
             </tr>
@@ -24,6 +25,7 @@
                 <td>
             <label class="checkbox">
                 <input type="checkbox" name="job" value="{{ $job.JobName }}">{{ $job.JobName }}</td>
+                <td>{{ $job.JobView }}</td>
                 <td><a href="{{ $job.JobUrl }}" target="_blank">Jenkins</a></td>
                 <td>{{ if $job.LastExecuteAt }}{{ formatAsDate $job.LastExecuteAt "utc" }}{{ else }}无{{ end}}</td>
             </label>

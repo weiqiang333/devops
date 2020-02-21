@@ -71,4 +71,5 @@ type ReleaseJobs struct {
 	JobHook	string	`json:"jobhook"`
 	UpdatedAt	time.Time	`json:"updated_at"`
 	LastExecuteAt	time.Time	`json:"last_execute_at"`
+	JobView	string	`json:"jobview"`
 }
