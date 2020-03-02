@@ -49,6 +49,7 @@ func CreateQRcode(c *gin.Context)  {
 	return
 }
 
+//这里如果查询用户 Search 为空则返回 "not exist", err info
 func SearchQRcodeSecret(name string) (string, error) {
 	sql := fmt.Sprintf("SELECT secret FROM google_auth WHERE name = '%s';", name)
 	db := database.Db()
@@ -60,10 +61,14 @@ func SearchQRcodeSecret(name string) (string, error) {
 	}
 
 	var g model.TableGoogleAuth
-	row.Next()
-	if err := row.Scan(&g.Secret); err != nil {
-		return "", fmt.Errorf("SearchQRcodeSecret db rows scan error for %s: %v", name, err)
+	if row.Next() {
+		if err := row.Scan(&g.Secret); err != nil {
+			return "", fmt.Errorf("SearchQRcodeSecret db rows scan error for %s: %v", name, err)
+		}
+	} else {
+		return "not exist", fmt.Errorf("SearchQRcodeSecret: User %s does not exist", name)
 	}
+
 	return g.Secret, nil
 }
 
@@ -71,6 +76,9 @@ func SearchQRcodeSecret(name string) (string, error) {
 func SearchQRcodeUrl(name string) (string, error) {
 	secret, err := SearchQRcodeSecret(name)
 	if err != nil {
+		if secret == "not exist" {
+			return secret, err
+		}
 		return "", err
 	}
 	qrCodeUrl := authentication.NewGoogleAuth().GetQrcodeUrl(name, secret)
