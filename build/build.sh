@@ -7,4 +7,4 @@ export GCCGO=gc
 go build -o bin/devops devops.go
 go build -o bin/devops-cron examples/devops-cron/devops-cron.go
 
-zip devops.zip -r bin/ web/
+zip devops.zip -r bin/ web/templates/ web/static/
