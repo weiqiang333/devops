@@ -28,9 +28,9 @@ func ModifyUserPwd(c *gin.Context) {
 
 	ok, err := auth.VerifyCode(user, qrcode)
 	if err != nil || ! ok {
-		log.Printf("ModifyUserPwd fail: %s; %v", user, err)
+		log.Printf("ModifyUserPwd fail: %s; VerifyCode %v; error message: %v", user, ok, err)
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"response": fmt.Sprintf("VerifyCode fail; %s", err.Error()),
+			"response": fmt.Sprintf("VerifyCode %v; error message: %v", ok, err),
 		})
 		return
 	}
