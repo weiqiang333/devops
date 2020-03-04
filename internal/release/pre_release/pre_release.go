@@ -18,9 +18,9 @@ import (
 //GetJobs 获取 jobs
 func GetJobs(job string) ([]model.ReleaseJobs, error) {
 	// job 为："'backend', 'frontend', 'accounts'" 或 ""
-	sql := fmt.Sprintf(`SELECT * FROM release_jobs;`)
+	sql := fmt.Sprintf(`SELECT * FROM release_jobs ORDER BY last_execute_at DESC, jobview, jobname;`)
 	if job != "" {
-		sql = fmt.Sprintf(`SELECT * FROM release_jobs WHERE jobname IN (%s);`, job)
+		sql = fmt.Sprintf(`SELECT * FROM release_jobs WHERE jobname IN (%s) ORDER BY last_execute_at DESC, jobview, jobname;`, job)
 	}
 	releaseJobs := []model.ReleaseJobs{}
 	db := database.Db()
