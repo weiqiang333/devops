@@ -112,6 +112,7 @@ func Web()  {
 		releases := private.Group("/release")
 		{
 			releases.GET("/", release.GetRelease)
+			releases.POST("/api/callback", release.JenkinsCallbackAPI)
 			releases.GET("/pre-release", release.GetPreRelease)
 			releases.POST("/pre-release", release.PostPreRelease)
 			releases.GET("/pre-release/admin", release.GetPreReleaseAdmin)

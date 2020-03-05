@@ -44,6 +44,42 @@ func GetJobs(job string) ([]model.ReleaseJobs, error) {
 	return releaseJobs, nil
 }
 
+func GetBuilds(action string) ([]model.ReleaseJobsBuilds, error) {
+	ofTime := time.Now().UTC().AddDate(0, 0,-1).Format("2006-01-02 15:04:05-07")
+	sql := fmt.Sprintf(`
+		SELECT *
+		FROM release_jobs_builds
+		WHERE update_at = (
+			SELECT MAX(update_at)
+			FROM release_jobs_builds builds
+			WHERE	builds.jobname = release_jobs_builds.jobname)
+		AND build_action = '%s'
+		AND update_at >= '%s';`, action, ofTime,
+	)
+	fmt.Println(sql)
+	releaseJobsBuilds := []model.ReleaseJobsBuilds{}
+	db := database.Db()
+	defer db.Close()
+	row, err := db.Query(sql)
+	defer row.Close()
+	if err != nil {
+		log.Printf("select release_jobs_builds error: %v", err)
+		return releaseJobsBuilds, fmt.Errorf("select fail")
+	}
+
+	for row.Next() {
+		releaseJobBuild := model.ReleaseJobsBuilds{}
+		err = row.Scan(&releaseJobBuild.Id, &releaseJobBuild.JobName, &releaseJobBuild.JobId, &releaseJobBuild.BuildResult,
+			&releaseJobBuild.BuildAction, &releaseJobBuild.BuildEnv, &releaseJobBuild.UpdateAt)
+		if err != nil {
+			log.Printf("GetBuilds Scan fail: %v", err)
+			continue
+		}
+		releaseJobsBuilds = append(releaseJobsBuilds, releaseJobBuild)
+	}
+	return releaseJobsBuilds, nil
+}
+
 
 //TriggerBuildJobs 调用 Jenkins 钩子, 触发构建
 func TriggerBuildJobs(username string, jobs []model.ReleaseJobs, releaseNote string) string {

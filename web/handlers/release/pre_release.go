@@ -51,6 +51,7 @@ func PostPreRelease(c *gin.Context)  {
 func GetPreRelease(c *gin.Context)  {
 	username := auth.Me(c)
 	releaseJobs, err := pre_release.GetJobs("")
+	releaseJobsBuilds, _ := pre_release.GetBuilds("build")
 	if err != nil {
 		c.HTML(http.StatusNotImplemented, "release/pre-release.tmpl", gin.H{
 			"user": username,
@@ -63,6 +64,7 @@ func GetPreRelease(c *gin.Context)  {
 		"user": username,
 		"release": "action",
 		"releaseJobs": releaseJobs,
+		"releaseJobsBuilds": releaseJobsBuilds,
 	})
 	return
 }
