@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/bndr/gojenkins"
+	"github.com/spf13/viper"
 
 	"github.com/weiqiang333/devops/internal/jenkins"
 	"github.com/weiqiang333/devops/internal/database"
@@ -15,9 +16,9 @@ import (
 //ACTION=build 则记录 pre-release build 信息
 func CallbackGrab(jobName, jobId, buildResult string)  {
 	log.Printf("release api start Callback Grab: %s/%s", jobName, jobId)
-	jenkinsBase := "http://10.0.5.47:8080/"
-	jenkinsUser := "weiqiang"
-	userToken := "06d065f2f60c61073b118d813c011975"
+	jenkinsBase := viper.GetString("jenkins.baseurl")
+	jenkinsUser := viper.GetString("jenkins.user")
+	userToken := viper.GetString("jenkins.token")
 	jenkinsClient, err := jenkins.ConnJenkins(jenkinsBase, jenkinsUser, userToken)
 	if err != nil {
 		log.Printf("CallbackGrab fial: %v", err)
@@ -58,23 +59,23 @@ func getJob(jenkinsClient *gojenkins.Jenkins, jobName, jobId string) (string, st
 func insertBuild(jobName, jobId, buildResult, buildAction, buildEnv string)  {
 	sql := fmt.Sprintf(`
 		INSERT INTO release_jobs_builds
-            (
-                jobname,
-                job_id,
-                build_result,
-                build_action,
-                build_env,
+			(
+				jobname,
+				job_id,
+				build_result,
+				build_action,
+				build_env,
 				update_at
-            )
+			)
 		VALUES
-            (
-                '%s',
-                %v,
-                '%s',
-                '%s',
-                '%s',
+			(
+				'%s',
+				%v,
+				'%s',
+				'%s',
+				'%s',
 				now() at time zone 'utc'
-            )
+			)
 		ON CONFLICT(jobname, job_id)
 		DO UPDATE SET
 			build_result=EXCLUDED.build_result,

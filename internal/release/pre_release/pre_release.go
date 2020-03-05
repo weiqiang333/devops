@@ -56,7 +56,6 @@ func GetBuilds(action string) ([]model.ReleaseJobsBuilds, error) {
 		AND build_action = '%s'
 		AND update_at >= '%s';`, action, ofTime,
 	)
-	fmt.Println(sql)
 	releaseJobsBuilds := []model.ReleaseJobsBuilds{}
 	db := database.Db()
 	defer db.Close()

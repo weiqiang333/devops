@@ -17,6 +17,9 @@ cron:
   update_server_list: '@every 12h'
   update_service: '@every 3h'
   update_pwd_expired: '0 0 0 * * *'
+  alarm_pwd_expired: '0 0 2 * * 1-5'
+  alarm_pwd_expired_token: xxx
+  update_aws_inastance_types: '@every 24h'
 
 # 登录认证 LDAP
 authentication:
@@ -34,3 +37,13 @@ mail:
   port: 587
   username: noreply@growingio.com
   password: xxx
+
+# aws
+aws:
+  rds:
+    match: ci-|qa-
+
+jenkins:
+  baseurl: http://10.0.5.47:8080/
+  user: xxx
+  token: xxx
