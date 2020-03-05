@@ -86,3 +86,14 @@ CREATE TABLE "release_jobs" (
     "last_execute_at"   TIMESTAMP DEFAULT '0001-01-01 00:00:00 +0000'
 );
 CREATE UNIQUE index "index_jobname_on_release_jobs" on "release_jobs" ("jobname");
+
+CREATE TABLE release_jobs_builds (
+    id  SERIAL NOT NULL PRIMARY KEY,
+    jobname VARCHAR NOT NULL,
+    job_id    INT NOT NULL,
+    build_result  VARCHAR(255),
+    build_action    VARCHAR(10),
+    build_env   VARCHAR(25),
+    update_at   TIMESTAMP DEFAULT (now() at time zone 'utc'),
+    CONSTRAINT pk_tbl_release_jobs_builds_jobname_job_id UNIQUE (jobname, job_id)
+);

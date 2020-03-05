@@ -73,3 +73,13 @@ type ReleaseJobs struct {
 	LastExecuteAt	time.Time	`json:"last_execute_at"`
 	JobView	string	`json:"jobview"`
 }
+
+type ReleaseJobsBuilds struct {
+	Id	int	`json:"id" form:"id"`
+	JobName	string	`json:"jobname"`
+	JobId	int	`json:"job_id"`
+	BuildResult	string	`json:"build_result"`
+	BuildAction	string	`json:"build_action"`
+	BuildEnv	string	`json:"build_env"`
+	UpdateAt	time.Time	`json:"update_at"`
+}

@@ -21,7 +21,7 @@ func Db() (db *sql.DB) {
 	connect_timeout := viper.GetString("database.connect_timeout")
 	db, err := sql.Open(driverName, fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s connect_timeout=%s", host, port, dbname, user, password, connect_timeout))
 	if err != nil {
-		log.Fatalf("unable to open database: %v", err)
+		log.Printf("unable to open database: %v", err)
 	}
 	return db
 }

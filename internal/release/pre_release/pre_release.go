@@ -18,9 +18,9 @@ import (
 //GetJobs 获取 jobs
 func GetJobs(job string) ([]model.ReleaseJobs, error) {
 	// job 为："'backend', 'frontend', 'accounts'" 或 ""
-	sql := fmt.Sprintf(`SELECT * FROM release_jobs;`)
+	sql := fmt.Sprintf(`SELECT * FROM release_jobs ORDER BY last_execute_at DESC, jobview, jobname;`)
 	if job != "" {
-		sql = fmt.Sprintf(`SELECT * FROM release_jobs WHERE jobname IN (%s);`, job)
+		sql = fmt.Sprintf(`SELECT * FROM release_jobs WHERE jobname IN (%s) ORDER BY last_execute_at DESC, jobview, jobname;`, job)
 	}
 	releaseJobs := []model.ReleaseJobs{}
 	db := database.Db()
@@ -42,6 +42,41 @@ func GetJobs(job string) ([]model.ReleaseJobs, error) {
 		releaseJobs = append(releaseJobs, releaseJob)
 	}
 	return releaseJobs, nil
+}
+
+func GetBuilds(action string) ([]model.ReleaseJobsBuilds, error) {
+	ofTime := time.Now().UTC().AddDate(0, 0,-1).Format("2006-01-02 15:04:05-07")
+	sql := fmt.Sprintf(`
+		SELECT *
+		FROM release_jobs_builds
+		WHERE update_at = (
+			SELECT MAX(update_at)
+			FROM release_jobs_builds builds
+			WHERE	builds.jobname = release_jobs_builds.jobname)
+		AND build_action = '%s'
+		AND update_at >= '%s';`, action, ofTime,
+	)
+	releaseJobsBuilds := []model.ReleaseJobsBuilds{}
+	db := database.Db()
+	defer db.Close()
+	row, err := db.Query(sql)
+	defer row.Close()
+	if err != nil {
+		log.Printf("select release_jobs_builds error: %v", err)
+		return releaseJobsBuilds, fmt.Errorf("select fail")
+	}
+
+	for row.Next() {
+		releaseJobBuild := model.ReleaseJobsBuilds{}
+		err = row.Scan(&releaseJobBuild.Id, &releaseJobBuild.JobName, &releaseJobBuild.JobId, &releaseJobBuild.BuildResult,
+			&releaseJobBuild.BuildAction, &releaseJobBuild.BuildEnv, &releaseJobBuild.UpdateAt)
+		if err != nil {
+			log.Printf("GetBuilds Scan fail: %v", err)
+			continue
+		}
+		releaseJobsBuilds = append(releaseJobsBuilds, releaseJobBuild)
+	}
+	return releaseJobsBuilds, nil
 }
 
 

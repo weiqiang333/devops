@@ -19,7 +19,10 @@
                 <th>view</th>
                 <th>Jenkins 地址</th>
                 <th>上次执行</th>
+                <th>build result</th>
+                <th>build url</th>
             </tr>
+        {{ $releaseJobsBuilds := .releaseJobsBuilds }}
         {{ range $job := .releaseJobs }}
             <tr>
                 <td>
@@ -28,6 +31,12 @@
                 <td>{{ $job.JobView }}</td>
                 <td><a href="{{ $job.JobUrl }}" target="_blank">Jenkins</a></td>
                 <td>{{ if $job.LastExecuteAt }}{{ formatAsDate $job.LastExecuteAt "utc" }}{{ else }}无{{ end}}</td>
+            {{ range $build := $releaseJobsBuilds }}
+                {{ if ifEqual $job.JobName $build.JobName }}
+                <td>{{ $build.BuildResult }}</td>
+                <td><a href="{{ $job.JobUrl }}/{{ $build.JobId }}" target="_blank">{{ $build.JobId }}</a></td>
+                {{ end }}
+            {{ end }}
             </label>
             </tr>
         {{ end }}
